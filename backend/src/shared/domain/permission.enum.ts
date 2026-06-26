@@ -1,0 +1,52 @@
+export enum Permission {
+  // ─── Companies (super-admin only) ─────────────────────────────────────────
+  COMPANY_VIEW = 'company:view',
+  COMPANY_CREATE = 'company:create',
+  COMPANY_UPDATE = 'company:update',
+  COMPANY_DELETE = 'company:delete',
+
+  // ─── Branches ─────────────────────────────────────────────────────────────
+  BRANCH_VIEW = 'branch:view',
+  BRANCH_CREATE = 'branch:create',
+  BRANCH_UPDATE = 'branch:update',
+  BRANCH_DELETE = 'branch:delete',
+
+  // ─── Stores ───────────────────────────────────────────────────────────────
+  STORE_VIEW = 'store:view',
+  STORE_CREATE = 'store:create',
+  STORE_UPDATE = 'store:update',
+  STORE_DELETE = 'store:delete',
+
+  // ─── Users / Staff ────────────────────────────────────────────────────────
+  USER_VIEW = 'user:view',
+  USER_CREATE = 'user:create',
+  USER_UPDATE = 'user:update',
+  USER_DELETE = 'user:delete',
+
+  // ─── Roles ────────────────────────────────────────────────────────────────
+  ROLE_VIEW = 'role:view',
+  ROLE_CREATE = 'role:create',
+  ROLE_UPDATE = 'role:update',
+  ROLE_DELETE = 'role:delete',
+
+  // ─── Brands ───────────────────────────────────────────────────────────────
+  BRAND_VIEW = 'brand:view',
+  BRAND_CREATE = 'brand:create',
+  BRAND_UPDATE = 'brand:update',
+  BRAND_DELETE = 'brand:delete',
+
+  // ─── Categories ───────────────────────────────────────────────────────────
+  CATEGORY_VIEW = 'category:view',
+  CATEGORY_CREATE = 'category:create',
+  CATEGORY_UPDATE = 'category:update',
+  CATEGORY_DELETE = 'category:delete',
+
+  // ─── Products ─────────────────────────────────────────────────────────────
+  PRODUCT_VIEW = 'product:view',
+  PRODUCT_CREATE = 'product:create',
+  PRODUCT_UPDATE = 'product:update',
+  PRODUCT_DELETE = 'product:delete',
+
+  // ─── Reports ──────────────────────────────────────────────────────────────
+  REPORT_VIEW = 'report:view',
+}
