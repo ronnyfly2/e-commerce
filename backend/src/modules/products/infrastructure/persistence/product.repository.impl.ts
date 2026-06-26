@@ -39,7 +39,7 @@ export class ProductRepositoryImpl implements ProductRepository {
   findById(id: string, companyId: string): Promise<ProductOrmEntity | null> {
     return this.repo.findOne({
       where: { id, companyId },
-      relations: ['category', 'brand'],
+      relations: { category: true, brand: true },
     });
   }
 

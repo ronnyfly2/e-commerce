@@ -17,7 +17,7 @@ export class CategoryOrmEntity extends BaseOrmEntity {
   @Column({ length: 100 })
   slug: string;
 
-  @Column({ name: 'image_url', length: 255, nullable: true })
+  @Column({ name: 'image_url', type: 'varchar', length: 255, nullable: true })
   imageUrl: string | null;
 
   @Column({ name: 'sort_order', default: 0 })

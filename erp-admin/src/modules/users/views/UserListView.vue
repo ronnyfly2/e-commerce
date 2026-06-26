@@ -90,7 +90,10 @@ async function confirmDelete() {
                 </div>
               </td>
               <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{{ u.email }}</td>
-              <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ u.role?.name ?? '—' }}</td>
+              <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
+                <BaseBadge v-if="u.isSuperAdmin" variant="warning">Super Admin</BaseBadge>
+                <span v-else>{{ u.role?.name ?? '—' }}</span>
+              </td>
               <td class="whitespace-nowrap px-6 py-4">
                 <BaseBadge :variant="u.isActive ? 'success' : 'danger'">{{ u.isActive ? 'Activo' : 'Inactivo' }}</BaseBadge>
               </td>

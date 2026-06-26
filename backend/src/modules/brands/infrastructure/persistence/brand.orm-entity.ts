@@ -14,7 +14,7 @@ export class BrandOrmEntity extends BaseOrmEntity {
   @Column({ length: 100 })
   slug: string;
 
-  @Column({ name: 'logo_url', length: 255, nullable: true })
+  @Column({ name: 'logo_url', type: 'varchar', length: 255, nullable: true })
   logoUrl: string | null;
 
   @Column({ type: 'text', nullable: true })

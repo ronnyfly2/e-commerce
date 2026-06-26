@@ -32,7 +32,7 @@ export class StaffUserRepositoryImpl implements StaffUserRepository {
   findById(id: string, companyId: string): Promise<UserOrmEntity | null> {
     return this.repo.findOne({
       where: { id, companyId },
-      relations: ['role'],
+      relations: { role: true },
     });
   }
 

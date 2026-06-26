@@ -18,10 +18,10 @@ export class UserOrmEntity extends BaseOrmEntity {
   @Column({ name: 'last_name', length: 100 })
   lastName: string;
 
-  @Column({ length: 20, nullable: true })
+  @Column({ type: 'varchar', length: 20, nullable: true })
   phone: string | null;
 
-  @Column({ name: 'avatar_url', length: 255, nullable: true })
+  @Column({ name: 'avatar_url', type: 'varchar', length: 255, nullable: true })
   avatarUrl: string | null;
 
   @Column({ name: 'is_active', default: true })

@@ -14,16 +14,16 @@ export class CompanyOrmEntity extends BaseOrmEntity {
   @Column({ length: 20 })
   ruc: string;
 
-  @Column({ length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   email: string | null;
 
-  @Column({ length: 20, nullable: true })
+  @Column({ type: 'varchar', length: 20, nullable: true })
   phone: string | null;
 
   @Column({ type: 'text', nullable: true })
   address: string | null;
 
-  @Column({ name: 'logo_url', length: 255, nullable: true })
+  @Column({ name: 'logo_url', type: 'varchar', length: 255, nullable: true })
   logoUrl: string | null;
 
   @Column({ name: 'is_active', default: true })

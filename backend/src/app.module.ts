@@ -39,7 +39,7 @@ import { ProductsModule } from '@/modules/products/products.module';
         database: config.get<string>('DB_NAME'),
         entities: [join(__dirname, 'modules/**/*.orm-entity.{ts,js}')],
         migrations: [join(__dirname, 'database/migrations/*.{ts,js}')],
-        synchronize: false,
+        synchronize: true,
         logging: config.get('NODE_ENV') === 'development',
       }),
     }),

@@ -20,10 +20,10 @@ export class RefreshTokenOrmEntity {
   @Column({ name: 'token_hash', length: 255 })
   tokenHash: string;
 
-  @Column({ nullable: true, length: 255 })
+  @Column({ type: 'varchar', nullable: true, length: 255 })
   device: string | null;
 
-  @Column({ nullable: true, length: 45 })
+  @Column({ type: 'varchar', nullable: true, length: 45 })
   ip: string | null;
 
   @Column({ name: 'expires_at', type: 'timestamptz' })

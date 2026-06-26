@@ -18,7 +18,7 @@ export class BranchOrmEntity extends BaseOrmEntity {
   @Column({ type: 'text', nullable: true })
   address: string | null;
 
-  @Column({ length: 20, nullable: true })
+  @Column({ type: 'varchar', length: 20, nullable: true })
   phone: string | null;
 
   @Column({ name: 'is_active', default: true })

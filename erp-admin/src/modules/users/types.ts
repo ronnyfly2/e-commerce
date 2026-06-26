@@ -1,6 +1,6 @@
 export interface User {
   id: string;
-  companyId: string;
+  companyId: string | null;
   roleId: string | null;
   email: string;
   firstName: string;
@@ -8,6 +8,7 @@ export interface User {
   phone: string | null;
   avatarUrl: string | null;
   isActive: boolean;
+  isSuperAdmin: boolean;
   lastLoginAt: string | null;
   role?: { id: string; name: string };
   createdAt: string;

@@ -47,7 +47,7 @@ export class ProductOrmEntity extends BaseOrmEntity {
   @Column({ length: 20, default: 'unit' })
   unit: string;
 
-  @Column({ name: 'image_url', length: 255, nullable: true })
+  @Column({ name: 'image_url', type: 'varchar', length: 255, nullable: true })
   imageUrl: string | null;
 
   @Column({ type: 'simple-array', nullable: true })

@@ -30,7 +30,7 @@ export class StoreRepositoryImpl implements StoreRepository {
   }
 
   findById(id: string, companyId: string): Promise<StoreOrmEntity | null> {
-    return this.repo.findOne({ where: { id, companyId }, relations: ['branch'] });
+    return this.repo.findOne({ where: { id, companyId }, relations: { branch: true } });
   }
 
   findByCode(code: string, companyId: string): Promise<StoreOrmEntity | null> {

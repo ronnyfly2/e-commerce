@@ -71,6 +71,9 @@ function isActive(path: string): boolean {
 
     <!-- User info -->
     <div class="border-t border-gray-200 dark:border-gray-800 p-4">
+      <div v-if="auth.user?.isSuperAdmin" class="mb-1 inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+        Super Admin
+      </div>
       <p class="truncate text-xs text-gray-500 dark:text-gray-400">{{ auth.user?.email }}</p>
     </div>
   </aside>

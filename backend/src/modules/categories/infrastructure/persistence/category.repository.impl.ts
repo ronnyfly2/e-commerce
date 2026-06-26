@@ -31,7 +31,7 @@ export class CategoryRepositoryImpl implements CategoryRepository {
   }
 
   findById(id: string, companyId: string): Promise<CategoryOrmEntity | null> {
-    return this.repo.findOne({ where: { id, companyId }, relations: ['parent', 'children'] });
+    return this.repo.findOne({ where: { id, companyId }, relations: { parent: true, children: true } });
   }
 
   findBySlug(slug: string, companyId: string): Promise<CategoryOrmEntity | null> {
@@ -60,7 +60,7 @@ export class CategoryRepositoryImpl implements CategoryRepository {
   findTree(companyId: string): Promise<CategoryOrmEntity[]> {
     return this.repo.find({
       where: { companyId, parentId: IsNull() },
-      relations: ['children', 'children.children'],
+      relations: { children: { children: true } },
       order: { sortOrder: 'ASC', name: 'ASC' },
     });
   }

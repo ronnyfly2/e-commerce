@@ -37,7 +37,7 @@ export class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
   findValidByHash(tokenHash: string): Promise<RefreshTokenOrmEntity | null> {
     return this.repo.findOne({
       where: { tokenHash, revokedAt: undefined },
-      relations: ['user', 'user.role'],
+      relations: { user: { role: true } },
     });
   }
 
