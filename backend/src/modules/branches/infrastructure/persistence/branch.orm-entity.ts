@@ -21,6 +21,12 @@ export class BranchOrmEntity extends BaseOrmEntity {
   @Column({ type: 'varchar', length: 20, nullable: true })
   phone: string | null;
 
+  @Column({ type: 'decimal', precision: 10, scale: 7, nullable: true })
+  latitude: number | null;
+
+  @Column({ type: 'decimal', precision: 10, scale: 7, nullable: true })
+  longitude: number | null;
+
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
 

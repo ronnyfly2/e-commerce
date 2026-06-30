@@ -20,6 +20,8 @@ import { StoresModule } from '@/modules/stores/stores.module';
 import { BrandsModule } from '@/modules/brands/brands.module';
 import { CategoriesModule } from '@/modules/categories/categories.module';
 import { ProductsModule } from '@/modules/products/products.module';
+import { CurrenciesModule } from '@/modules/currencies/currencies.module';
+import { OrdersModule } from '@/modules/orders/orders.module';
 
 @Module({
   imports: [
@@ -63,6 +65,8 @@ import { ProductsModule } from '@/modules/products/products.module';
     BrandsModule,
     CategoriesModule,
     ProductsModule,
+    CurrenciesModule,
+    OrdersModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },

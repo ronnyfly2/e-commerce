@@ -1,3 +1,5 @@
+import type { Permission } from '@/modules/auth/types';
+
 export interface User {
   id: string;
   companyId: string | null;
@@ -10,7 +12,8 @@ export interface User {
   isActive: boolean;
   isSuperAdmin: boolean;
   lastLoginAt: string | null;
-  role?: { id: string; name: string };
+  additionalPermissions: Permission[];
+  role?: { id: string; name: string; permissions: Permission[] };
   createdAt: string;
   updatedAt: string;
 }
@@ -22,6 +25,9 @@ export interface CreateUserPayload {
   lastName: string;
   phone?: string;
   roleId: string;
+  additionalPermissions?: Permission[];
 }
 
-export type UpdateUserPayload = Partial<Omit<CreateUserPayload, 'email'> & { isActive: boolean }>;
+export type UpdateUserPayload = Partial<
+  Omit<CreateUserPayload, 'email'> & { isActive: boolean }
+>;

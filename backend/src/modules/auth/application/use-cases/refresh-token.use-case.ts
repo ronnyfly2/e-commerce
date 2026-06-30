@@ -34,8 +34,9 @@ export class RefreshTokenUseCase {
     await this.refreshTokenRepo.revokeById(stored.id);
 
     const user = stored.user;
-    const permissions: Permission[] =
-      (user.role?.permissions as Permission[]) ?? [];
+    const rolePermissions: Permission[] = user.role?.permissions ?? [];
+    const extraPermissions: Permission[] = user.additionalPermissions ?? [];
+    const permissions = [...new Set([...rolePermissions, ...extraPermissions])];
 
     const payload = {
       sub: user.id,

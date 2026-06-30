@@ -38,8 +38,9 @@ export class LoginUseCase {
 
     if (!user.isActive) return err(new UserInactiveError());
 
-    const permissions: Permission[] =
-      (user.role?.permissions as Permission[]) ?? [];
+    const rolePermissions: Permission[] = user.role?.permissions ?? [];
+    const extraPermissions: Permission[] = user.additionalPermissions ?? [];
+    const permissions = [...new Set([...rolePermissions, ...extraPermissions])];
 
     const payload = {
       sub: user.id,

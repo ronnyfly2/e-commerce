@@ -3,7 +3,9 @@ import { RouterLink, useRoute } from 'vue-router';
 import {
   BuildingOffice2Icon,
   BuildingStorefrontIcon,
+  ClipboardDocumentListIcon,
   CubeIcon,
+  CurrencyDollarIcon,
   HomeIcon,
   ShoppingBagIcon,
   TagIcon,
@@ -24,11 +26,13 @@ const navItems = [
   { label: 'Empresas', to: '/companies', icon: BuildingOffice2Icon, permission: 'company:view' as const },
   { label: 'Sucursales', to: '/branches', icon: MapPinIcon, permission: 'branch:view' as const },
   { label: 'Tiendas', to: '/stores', icon: BuildingStorefrontIcon, permission: 'store:view' as const },
-  { label: 'Personal', to: '/users', icon: UsersIcon, permission: 'user:view' as const },
+  { label: 'Usuarios', to: '/users', icon: UsersIcon, permission: 'user:view' as const },
   { label: 'Roles', to: '/roles', icon: WrenchScrewdriverIcon, permission: 'role:view' as const },
   { label: 'Marcas', to: '/brands', icon: StarIcon, permission: 'brand:view' as const },
   { label: 'Categorías', to: '/categories', icon: TagIcon, permission: 'category:view' as const },
   { label: 'Productos', to: '/products', icon: ShoppingBagIcon, permission: 'product:view' as const },
+  { label: 'Monedas', to: '/currencies', icon: CurrencyDollarIcon, permission: 'currency:view' as const },
+  { label: 'Pedidos', to: '/orders', icon: ClipboardDocumentListIcon, permission: 'order:view' as const },
 ];
 
 const visible = navItems.filter((item) =>

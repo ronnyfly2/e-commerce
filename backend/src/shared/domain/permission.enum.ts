@@ -1,5 +1,5 @@
 export enum Permission {
-  // ─── Companies (super-admin only) ─────────────────────────────────────────
+  // ─── Companies (platform super-admin only) ────────────────────────────────
   COMPANY_VIEW = 'company:view',
   COMPANY_CREATE = 'company:create',
   COMPANY_UPDATE = 'company:update',
@@ -47,6 +47,41 @@ export enum Permission {
   PRODUCT_UPDATE = 'product:update',
   PRODUCT_DELETE = 'product:delete',
 
+  // ─── Inventory ────────────────────────────────────────────────────────────
+  INVENTORY_VIEW = 'inventory:view',
+  INVENTORY_ADJUST = 'inventory:adjust',
+
+  // ─── Orders ───────────────────────────────────────────────────────────────
+  ORDER_VIEW = 'order:view',
+  ORDER_CREATE = 'order:create',
+  ORDER_UPDATE = 'order:update',
+  ORDER_CANCEL = 'order:cancel',
+  ORDER_EXPORT = 'order:export',
+
+  // ─── Payments ─────────────────────────────────────────────────────────────
+  PAYMENT_VIEW = 'payment:view',
+  PAYMENT_PROCESS = 'payment:process',
+  PAYMENT_REFUND = 'payment:refund',
+
+  // ─── Customers ────────────────────────────────────────────────────────────
+  CUSTOMER_VIEW = 'customer:view',
+  CUSTOMER_CREATE = 'customer:create',
+  CUSTOMER_UPDATE = 'customer:update',
+  CUSTOMER_DELETE = 'customer:delete',
+
+  // ─── Discounts / Coupons ──────────────────────────────────────────────────
+  DISCOUNT_VIEW = 'discount:view',
+  DISCOUNT_MANAGE = 'discount:manage',
+
   // ─── Reports ──────────────────────────────────────────────────────────────
   REPORT_VIEW = 'report:view',
+  REPORT_EXPORT = 'report:export',
+
+  // ─── Dashboard ────────────────────────────────────────────────────────────
+  DASHBOARD_VIEW = 'dashboard:view',
+
+  // ─── Currencies (platform super-admin only) ───────────────────────────────
+  CURRENCY_VIEW = 'currency:view',
+  CURRENCY_CREATE = 'currency:create',
+  CURRENCY_UPDATE = 'currency:update',
 }

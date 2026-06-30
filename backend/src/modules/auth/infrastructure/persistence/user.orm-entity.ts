@@ -1,5 +1,6 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseOrmEntity } from '@/shared/domain/base-orm.entity';
+import { Permission } from '@/shared/domain/permission.enum';
 import { RoleOrmEntity } from '@/modules/roles/infrastructure/persistence/role.orm-entity';
 import { CompanyOrmEntity } from '@/modules/companies/infrastructure/persistence/company.orm-entity';
 
@@ -38,6 +39,9 @@ export class UserOrmEntity extends BaseOrmEntity {
 
   @Column({ name: 'role_id', type: 'uuid', nullable: true })
   roleId: string | null;
+
+  @Column({ name: 'additional_permissions', type: 'simple-array', default: '' })
+  additionalPermissions: Permission[];
 
   @ManyToOne(() => CompanyOrmEntity, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'company_id' })

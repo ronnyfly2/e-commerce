@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, MaxLength, Matches } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MaxLength, Matches, IsNumber, Min, Max } from 'class-validator';
 
 export class CreateBranchDto {
   @ApiProperty({ example: 'Main Branch' })
@@ -24,4 +24,18 @@ export class CreateBranchDto {
   @IsString()
   @MaxLength(20)
   phone?: string;
+
+  @ApiPropertyOptional({ example: -12.0464, description: 'Latitude (-90 to 90)' })
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 7 })
+  @Min(-90)
+  @Max(90)
+  latitude?: number;
+
+  @ApiPropertyOptional({ example: -77.0428, description: 'Longitude (-180 to 180)' })
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 7 })
+  @Min(-180)
+  @Max(180)
+  longitude?: number;
 }

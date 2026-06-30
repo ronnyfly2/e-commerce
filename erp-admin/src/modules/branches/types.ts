@@ -5,6 +5,8 @@ export interface Branch {
   code: string;
   address: string | null;
   phone: string | null;
+  latitude: number | null;
+  longitude: number | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -15,6 +17,8 @@ export interface CreateBranchPayload {
   code: string;
   address?: string;
   phone?: string;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export type UpdateBranchPayload = Partial<CreateBranchPayload & { isActive: boolean }>;

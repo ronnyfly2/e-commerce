@@ -1,13 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-  MaxLength,
-  MinLength,
+  IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional,
+  IsString, IsUUID, MaxLength, MinLength,
 } from 'class-validator';
+import { Permission } from '@/shared/domain/permission.enum';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'john.doe@company.com' })
@@ -40,4 +36,14 @@ export class CreateUserDto {
   @ApiProperty({ description: 'Role UUID to assign' })
   @IsUUID()
   roleId: string;
+
+  @ApiPropertyOptional({
+    enum: Permission,
+    isArray: true,
+    description: 'Extra permissions granted on top of the role',
+  })
+  @IsOptional()
+  @IsArray()
+  @IsEnum(Permission, { each: true })
+  additionalPermissions?: Permission[];
 }

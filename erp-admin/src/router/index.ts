@@ -181,6 +181,34 @@ const router = createRouter({
           component: () => import('@/modules/products/views/ProductFormView.vue'),
           meta: { permissions: ['product:update'] },
         },
+
+        // ─── Currencies ──────────────────────────────────────────────────────
+        {
+          path: 'currencies',
+          name: 'currencies',
+          component: () => import('@/modules/currencies/views/CurrencyListView.vue'),
+          meta: { permissions: ['currency:view'] },
+        },
+
+        // ─── Orders ──────────────────────────────────────────────────────────
+        {
+          path: 'orders',
+          name: 'orders',
+          component: () => import('@/modules/orders/views/OrderListView.vue'),
+          meta: { permissions: ['order:view'] },
+        },
+        {
+          path: 'orders/new',
+          name: 'orders.create',
+          component: () => import('@/modules/orders/views/OrderFormView.vue'),
+          meta: { permissions: ['order:create'] },
+        },
+        {
+          path: 'orders/:id',
+          name: 'orders.detail',
+          component: () => import('@/modules/orders/views/OrderDetailView.vue'),
+          meta: { permissions: ['order:view'] },
+        },
       ],
     },
 
