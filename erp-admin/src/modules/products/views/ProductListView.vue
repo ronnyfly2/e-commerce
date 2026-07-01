@@ -37,7 +37,7 @@ const brandOptions = ref<{ label: string; value: string }[]>([{ label: 'Todas la
 const activeOptions = [{ label: 'Todos', value: '' }, { label: 'Activos', value: 'true' }, { label: 'Inactivos', value: 'false' }];
 
 onMounted(async () => {
-  const [cats, brands] = await Promise.all([categoryApi.getAll({ limit: 200 }), brandApi.getAll({ limit: 200 })]);
+  const [cats, brands] = await Promise.all([categoryApi.getAll({ limit: 100 }), brandApi.getAll({ limit: 100 })]);
   categoryOptions.value.push(...cats.items.map((c) => ({ label: c.name, value: c.id })));
   brandOptions.value.push(...brands.items.map((b) => ({ label: b.name, value: b.id })));
   load();

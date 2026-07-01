@@ -1,5 +1,6 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, Unique } from 'typeorm';
 import { BaseOrmEntity } from '@/shared/domain/base-orm.entity';
+import { numericTransformer } from '@/shared/infrastructure/persistence/numeric.transformer';
 import { CompanyOrmEntity } from '@/modules/companies/infrastructure/persistence/company.orm-entity';
 
 @Entity('branches')
@@ -21,10 +22,10 @@ export class BranchOrmEntity extends BaseOrmEntity {
   @Column({ type: 'varchar', length: 20, nullable: true })
   phone: string | null;
 
-  @Column({ type: 'decimal', precision: 10, scale: 7, nullable: true })
+  @Column({ type: 'decimal', precision: 10, scale: 7, nullable: true, transformer: numericTransformer })
   latitude: number | null;
 
-  @Column({ type: 'decimal', precision: 10, scale: 7, nullable: true })
+  @Column({ type: 'decimal', precision: 10, scale: 7, nullable: true, transformer: numericTransformer })
   longitude: number | null;
 
   @Column({ name: 'is_active', default: true })

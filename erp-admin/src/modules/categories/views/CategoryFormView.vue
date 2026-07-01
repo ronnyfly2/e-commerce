@@ -12,6 +12,7 @@ import PageHeader from '@/shared/components/common/PageHeader.vue';
 import BaseInput from '@/shared/components/ui/BaseInput.vue';
 import BaseSelect from '@/shared/components/ui/BaseSelect.vue';
 import BaseButton from '@/shared/components/ui/BaseButton.vue';
+import ImageUploader from '@/shared/components/common/ImageUploader.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -19,13 +20,13 @@ const id = route.params.id as string | undefined;
 const isEdit = !!id;
 
 const parentOptions = ref<{ label: string; value: string }[]>([]);
+const image = ref<string[]>([]);
 
 const schema = toTypedSchema(z.object({
   name: z.string().min(1).max(100),
   slug: z.string().regex(/^[a-z0-9-]+$/, 'Solo minúsculas, números y guiones').max(100),
   parentId: z.string().uuid().optional().or(z.literal('')),
-  sortOrder: z.number().int().min(0).default(0),
-  description: z.string().optional(),
+  sortOrder: z.coerce.number().int().min(0),
 }));
 
 const { handleSubmit, isSubmitting, setValues } = useForm({ validationSchema: schema });
@@ -33,10 +34,9 @@ const { value: name, errorMessage: nameError } = useField<string>('name');
 const { value: slug, errorMessage: slugError } = useField<string>('slug');
 const { value: parentId } = useField<string>('parentId');
 const { value: sortOrder } = useField<number>('sortOrder');
-const { value: description } = useField<string>('description');
 
 onMounted(async () => {
-  const allCats = await categoryApi.getAll({ limit: 200 });
+  const allCats = await categoryApi.getAll({ limit: 100 });
   parentOptions.value = [
     { label: '— Sin padre (raíz) —', value: '' },
     ...allCats.items
@@ -46,7 +46,8 @@ onMounted(async () => {
 
   if (isEdit && id) {
     const c = await categoryApi.getById(id);
-    setValues({ name: c.name, slug: c.slug, parentId: c.parentId ?? '', sortOrder: c.sortOrder, description: c.description ?? '' });
+    setValues({ name: c.name, slug: c.slug, parentId: c.parentId ?? '', sortOrder: c.sortOrder });
+    image.value = c.imageUrl ? [c.imageUrl] : [];
   } else {
     setValues({ sortOrder: 0, parentId: '' });
   }
@@ -58,7 +59,7 @@ function autoSlug(val: string) {
 
 const onSubmit = handleSubmit(async (values) => {
   try {
-    const payload = { ...values, parentId: values.parentId || undefined, description: values.description || undefined };
+    const payload = { ...values, parentId: values.parentId || undefined, imageUrl: image.value[0] || undefined };
     if (isEdit && id) { await categoryApi.update(id, payload); toast.success('Categoría actualizada'); }
     else { await categoryApi.create(payload as { name: string; slug: string }); toast.success('Categoría creada'); }
     router.push('/categories');
@@ -77,7 +78,10 @@ const onSubmit = handleSubmit(async (values) => {
         <BaseInput v-model="slug" label="Slug" placeholder="electrodomesticos" :error="slugError" required />
         <BaseSelect v-model="parentId" label="Categoría padre" :options="parentOptions" />
         <BaseInput v-model.number="sortOrder" label="Orden" type="number" placeholder="0" />
-        <BaseInput v-model="description" label="Descripción" placeholder="Descripción opcional" />
+        <div>
+          <p class="mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">Imagen</p>
+          <ImageUploader v-model="image" :max="1" />
+        </div>
         <div class="flex justify-end gap-3 pt-2">
           <BaseButton variant="secondary" type="button" @click="router.back()">Cancelar</BaseButton>
           <BaseButton type="submit" :loading="isSubmitting">{{ isEdit ? 'Guardar' : 'Crear categoría' }}</BaseButton>

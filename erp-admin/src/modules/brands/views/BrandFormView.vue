@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useForm, useField } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -10,29 +10,31 @@ import { extractApiError } from '@/shared/types/api.types';
 import PageHeader from '@/shared/components/common/PageHeader.vue';
 import BaseInput from '@/shared/components/ui/BaseInput.vue';
 import BaseButton from '@/shared/components/ui/BaseButton.vue';
+import ImageUploader from '@/shared/components/common/ImageUploader.vue';
 
 const route = useRoute();
 const router = useRouter();
 const id = route.params.id as string | undefined;
 const isEdit = !!id;
 
+const logo = ref<string[]>([]);
+
 const schema = toTypedSchema(z.object({
   name: z.string().min(1).max(100),
   slug: z.string().regex(/^[a-z0-9-]+$/, 'Solo minúsculas, números y guiones').max(100),
   description: z.string().optional(),
-  logoUrl: z.string().url('URL inválida').optional().or(z.literal('')),
 }));
 
 const { handleSubmit, isSubmitting, setValues } = useForm({ validationSchema: schema });
 const { value: name, errorMessage: nameError } = useField<string>('name');
 const { value: slug, errorMessage: slugError } = useField<string>('slug');
 const { value: description } = useField<string>('description');
-const { value: logoUrl, errorMessage: logoError } = useField<string>('logoUrl');
 
 onMounted(async () => {
   if (isEdit && id) {
     const b = await brandApi.getById(id);
-    setValues({ name: b.name, slug: b.slug, description: b.description ?? '', logoUrl: b.logoUrl ?? '' });
+    setValues({ name: b.name, slug: b.slug, description: b.description ?? '' });
+    logo.value = b.logoUrl ? [b.logoUrl] : [];
   }
 });
 
@@ -42,7 +44,7 @@ function autoSlug(val: string) {
 
 const onSubmit = handleSubmit(async (values) => {
   try {
-    const payload = { ...values, logoUrl: values.logoUrl || undefined, description: values.description || undefined };
+    const payload = { ...values, logoUrl: logo.value[0] || undefined, description: values.description || undefined };
     if (isEdit && id) { await brandApi.update(id, payload); toast.success('Marca actualizada'); }
     else { await brandApi.create(payload as { name: string; slug: string }); toast.success('Marca creada'); }
     router.push('/brands');
@@ -59,7 +61,10 @@ const onSubmit = handleSubmit(async (values) => {
       <form class="space-y-5" @submit.prevent="onSubmit">
         <BaseInput v-model="name" label="Nombre" placeholder="Nike" :error="nameError" required @update:model-value="autoSlug" />
         <BaseInput v-model="slug" label="Slug" placeholder="nike" :error="slugError" required />
-        <BaseInput v-model="logoUrl" label="URL del logo" placeholder="https://..." :error="logoError" />
+        <div>
+          <p class="mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">Logo</p>
+          <ImageUploader v-model="logo" :max="1" />
+        </div>
         <BaseInput v-model="description" label="Descripción" placeholder="Descripción opcional" />
         <div class="flex justify-end gap-3 pt-2">
           <BaseButton variant="secondary" type="button" @click="router.back()">Cancelar</BaseButton>

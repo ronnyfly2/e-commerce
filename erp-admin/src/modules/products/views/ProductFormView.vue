@@ -5,15 +5,17 @@ import { useForm, useField } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 import { toast } from '@/shared/composables/useToast';
-import { XMarkIcon } from '@heroicons/vue/24/outline';
 import { productApi } from '../api';
 import { categoryApi } from '@/modules/categories/api';
 import { brandApi } from '@/modules/brands/api';
+import ProductStockTable from '@/modules/inventory/components/ProductStockTable.vue';
+import ProductFeatureList from '@/modules/product-features/components/ProductFeatureList.vue';
 import { extractApiError } from '@/shared/types/api.types';
 import PageHeader from '@/shared/components/common/PageHeader.vue';
 import BaseInput from '@/shared/components/ui/BaseInput.vue';
 import BaseSelect from '@/shared/components/ui/BaseSelect.vue';
 import BaseButton from '@/shared/components/ui/BaseButton.vue';
+import ImageUploader from '@/shared/components/common/ImageUploader.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -22,7 +24,6 @@ const isEdit = !!id;
 
 const categoryOptions = ref<{ label: string; value: string }[]>([]);
 const brandOptions = ref<{ label: string; value: string }[]>([{ label: '— Sin marca —', value: '' }]);
-const imageInput = ref('');
 const images = ref<string[]>([]);
 
 const schema = toTypedSchema(z.object({
@@ -30,10 +31,10 @@ const schema = toTypedSchema(z.object({
   name: z.string().min(1).max(255),
   slug: z.string().regex(/^[a-z0-9-]+$/, 'Solo minúsculas, números y guiones').max(255),
   description: z.string().optional(),
-  price: z.number({ coerce: true }).positive('El precio debe ser positivo'),
-  compareAtPrice: z.number({ coerce: true }).positive().optional().or(z.literal('')),
-  costPrice: z.number({ coerce: true }).positive().optional().or(z.literal('')),
-  stock: z.number({ coerce: true }).int().min(0).default(0),
+  price: z.coerce.number().positive('El precio debe ser positivo'),
+  compareAtPrice: z.coerce.number().positive().optional().or(z.literal('')),
+  costPrice: z.coerce.number().positive().optional().or(z.literal('')),
+  minStock: z.coerce.number().int().min(0),
   categoryId: z.string().uuid('Selecciona una categoría'),
   brandId: z.string().uuid().optional().or(z.literal('')),
 }));
@@ -46,12 +47,12 @@ const { value: description } = useField<string>('description');
 const { value: price, errorMessage: priceError } = useField<number>('price');
 const { value: compareAtPrice } = useField<number | ''>('compareAtPrice');
 const { value: costPrice } = useField<number | ''>('costPrice');
-const { value: stock } = useField<number>('stock');
+const { value: minStock } = useField<number>('minStock');
 const { value: categoryId, errorMessage: categoryError } = useField<string>('categoryId');
 const { value: brandId } = useField<string>('brandId');
 
 onMounted(async () => {
-  const [cats, brands] = await Promise.all([categoryApi.getAll({ limit: 200 }), brandApi.getAll({ limit: 200 })]);
+  const [cats, brands] = await Promise.all([categoryApi.getAll({ limit: 100 }), brandApi.getAll({ limit: 100 })]);
   categoryOptions.value = cats.items.map((c) => ({ label: c.name, value: c.id }));
   brandOptions.value.push(...brands.items.map((b) => ({ label: b.name, value: b.id })));
 
@@ -61,24 +62,17 @@ onMounted(async () => {
     setValues({
       sku: p.sku, name: p.name, slug: p.slug, description: p.description ?? '',
       price: Number(p.price), compareAtPrice: p.compareAtPrice ? Number(p.compareAtPrice) : '',
-      costPrice: p.costPrice ? Number(p.costPrice) : '', stock: p.stock,
+      costPrice: p.costPrice ? Number(p.costPrice) : '', minStock: p.minStock,
       categoryId: p.categoryId, brandId: p.brandId ?? '',
     });
   } else {
-    setValues({ stock: 0, brandId: '' });
+    setValues({ minStock: 0, brandId: '' });
   }
 });
 
 function autoSlug(val: string) {
   if (!isEdit) slug.value = val.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim();
 }
-
-function addImage() {
-  const url = imageInput.value.trim();
-  if (url && !images.value.includes(url)) { images.value.push(url); imageInput.value = ''; }
-}
-
-function removeImage(idx: number) { images.value.splice(idx, 1); }
 
 const onSubmit = handleSubmit(async (values) => {
   try {
@@ -137,26 +131,29 @@ const onSubmit = handleSubmit(async (values) => {
       <div class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-900">
         <h3 class="mb-4 text-sm font-semibold text-gray-900 dark:text-white">Inventario</h3>
         <div class="w-40">
-          <BaseInput v-model.number="stock" label="Stock" type="number" step="1" placeholder="0" />
+          <BaseInput v-model.number="minStock" label="Stock mínimo" type="number" step="1" placeholder="0" hint="Umbral de alerta" />
         </div>
+        <p v-if="!isEdit" class="mt-3 text-xs text-gray-400">
+          El stock disponible se gestiona por tienda una vez creado el producto.
+        </p>
+      </div>
+
+      <!-- Stock por tienda -->
+      <div v-if="isEdit && id" class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-900">
+        <h3 class="mb-4 text-sm font-semibold text-gray-900 dark:text-white">Stock por tienda</h3>
+        <ProductStockTable :product-id="id" />
+      </div>
+
+      <!-- Características -->
+      <div v-if="isEdit && id" class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-900">
+        <h3 class="mb-4 text-sm font-semibold text-gray-900 dark:text-white">Características</h3>
+        <ProductFeatureList :product-id="id" />
       </div>
 
       <!-- Imágenes -->
       <div class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-900">
         <h3 class="mb-4 text-sm font-semibold text-gray-900 dark:text-white">Imágenes</h3>
-        <div class="mb-3 flex gap-2">
-          <input v-model="imageInput" type="url" placeholder="https://..." class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white" @keydown.enter.prevent="addImage" />
-          <BaseButton type="button" variant="secondary" size="sm" @click="addImage">Agregar</BaseButton>
-        </div>
-        <div v-if="images.length > 0" class="flex flex-wrap gap-3">
-          <div v-for="(img, idx) in images" :key="img" class="relative">
-            <img :src="img" :alt="`Imagen ${idx + 1}`" class="h-20 w-20 rounded-lg border border-gray-200 object-cover dark:border-gray-700" />
-            <button type="button" class="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600" @click="removeImage(idx)">
-              <XMarkIcon class="h-3 w-3" />
-            </button>
-          </div>
-        </div>
-        <p v-else class="text-xs text-gray-400">Sin imágenes aún</p>
+        <ImageUploader v-model="images" />
       </div>
 
       <div class="flex justify-end gap-3">

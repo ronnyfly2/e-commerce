@@ -15,7 +15,7 @@ import BaseInput from '@/shared/components/ui/BaseInput.vue';
 import BaseSelect from '@/shared/components/ui/BaseSelect.vue';
 import BaseButton from '@/shared/components/ui/BaseButton.vue';
 
-const BranchMapPicker = defineAsyncComponent(() => import('../components/BranchMapPicker.vue'));
+const AddressMapPicker = defineAsyncComponent(() => import('@/shared/components/common/AddressMapPicker.vue'));
 
 const route = useRoute();
 const router = useRouter();
@@ -133,7 +133,7 @@ const onSubmit = handleSubmit(async (values) => {
         <!-- Map picker -->
         <div>
           <p class="mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">Ubicación</p>
-          <BranchMapPicker
+          <AddressMapPicker
             :latitude="latitude"
             :longitude="longitude"
             @update:latitude="setFieldValue('latitude', $event)"

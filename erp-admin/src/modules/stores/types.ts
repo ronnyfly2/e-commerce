@@ -5,6 +5,8 @@ export interface Store {
   name: string;
   code: string;
   address: string | null;
+  latitude: number | null;
+  longitude: number | null;
   isActive: boolean;
   branch?: { id: string; name: string };
   createdAt: string;
@@ -16,6 +18,8 @@ export interface CreateStorePayload {
   name: string;
   code: string;
   address?: string;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export type UpdateStorePayload = Partial<CreateStorePayload & { isActive: boolean }>;

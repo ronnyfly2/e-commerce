@@ -10,6 +10,7 @@ export interface Product {
   price: string;
   compareAtPrice: string | null;
   costPrice: string | null;
+  /** Denormalized total — sum of per-store quantities, synced server-side on every inventory adjustment. */
   stock: number;
   minStock: number;
   unit: string;
@@ -30,7 +31,6 @@ export interface CreateProductPayload {
   price: number;
   compareAtPrice?: number;
   costPrice?: number;
-  stock?: number;
   minStock?: number;
   unit?: string;
   categoryId?: string;

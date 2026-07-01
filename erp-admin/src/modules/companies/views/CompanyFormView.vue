@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useForm, useField } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -10,11 +10,14 @@ import { extractApiError } from '@/shared/types/api.types';
 import PageHeader from '@/shared/components/common/PageHeader.vue';
 import BaseInput from '@/shared/components/ui/BaseInput.vue';
 import BaseButton from '@/shared/components/ui/BaseButton.vue';
+import ImageUploader from '@/shared/components/common/ImageUploader.vue';
 
 const route = useRoute();
 const router = useRouter();
 const id = route.params.id as string | undefined;
 const isEdit = !!id;
+
+const logo = ref<string[]>([]);
 
 const schema = toTypedSchema(
   z.object({
@@ -47,16 +50,18 @@ onMounted(async () => {
       phone: company.phone ?? '',
       address: company.address ?? '',
     });
+    logo.value = company.logoUrl ? [company.logoUrl] : [];
   }
 });
 
 const onSubmit = handleSubmit(async (values) => {
   try {
+    const payload = { ...values, logoUrl: logo.value[0] || undefined };
     if (isEdit && id) {
-      await companyApi.update(id, values);
+      await companyApi.update(id, payload);
       toast.success('Empresa actualizada');
     } else {
-      await companyApi.create(values);
+      await companyApi.create(payload);
       toast.success('Empresa creada');
     }
     router.push('/companies');
@@ -131,6 +136,10 @@ function autoSlug(val: string) {
           label="Dirección"
           placeholder="Av. Principal 123"
         />
+        <div>
+          <p class="mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">Logo</p>
+          <ImageUploader v-model="logo" :max="1" />
+        </div>
 
         <div class="flex justify-end gap-3 pt-2">
           <BaseButton variant="secondary" type="button" @click="router.back()">

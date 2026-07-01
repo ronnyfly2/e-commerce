@@ -49,13 +49,7 @@ export class CreateProductDto {
   @IsPositive()
   costPrice?: number;
 
-  @ApiPropertyOptional({ default: 0 })
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  stock?: number;
-
-  @ApiPropertyOptional({ default: 0 })
+  @ApiPropertyOptional({ default: 0, description: 'Reorder threshold — actual quantity is managed per store via /inventory' })
   @IsOptional()
   @IsInt()
   @Min(0)

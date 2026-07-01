@@ -11,6 +11,8 @@ import { Permission } from '@/shared/domain/permission.enum';
 import { CurrentUser } from '@/shared/infrastructure/decorators/current-user.decorator';
 import { JwtPayload } from '@/modules/auth/infrastructure/strategies/jwt.strategy';
 import { PaginationQueryDto } from '@/shared/domain/pagination';
+import { StoreRepository } from '@/modules/stores/infrastructure/persistence/store.repository.impl';
+import { ProductStockRepository } from '@/modules/inventory/infrastructure/persistence/product-stock.repository.impl';
 import { ProductRepository } from '../persistence/product.repository.impl';
 import { CreateProductDto } from '../../application/dtos/create-product.dto';
 import {
@@ -41,7 +43,11 @@ class ProductQueryDto extends PaginationQueryDto {
 @ApiTags('Products')
 @Controller('products')
 export class ProductController {
-  constructor(private readonly productRepo: ProductRepository) {}
+  constructor(
+    private readonly productRepo: ProductRepository,
+    private readonly storeRepo: StoreRepository,
+    private readonly productStockRepo: ProductStockRepository,
+  ) {}
 
   @Post()
   @Permissions(Permission.PRODUCT_CREATE)
@@ -56,7 +62,12 @@ export class ProductController {
     if (existingSku) throw new ProductSkuConflictError(dto.sku);
     if (existingSlug) throw new ProductSlugConflictError(dto.slug);
 
-    return this.productRepo.create({ ...dto, companyId: user.companyId });
+    const product = await this.productRepo.create({ ...dto, companyId: user.companyId });
+
+    const storeIds = await this.storeRepo.findAllIds(user.companyId);
+    await this.productStockRepo.createManyForProduct(product.id, user.companyId, storeIds);
+
+    return product;
   }
 
   @Get()

@@ -76,7 +76,7 @@ onUnmounted(() => {
   marker = null;
 });
 
-// Handles the async edit-load case: props arrive after mount when the parent fetches branch data
+// Handles the async edit-load case: props arrive after mount when the parent fetches record data
 watch(
   () => [latitude, longitude] as const,
   ([lat, lng]) => {

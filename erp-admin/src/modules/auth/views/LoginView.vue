@@ -58,6 +58,7 @@ const onSubmit = handleSubmit(async (values) => {
             label="Email"
             type="email"
             placeholder="tu@empresa.com"
+            autocomplete="email"
             :error="emailError"
             required
           />
@@ -67,6 +68,7 @@ const onSubmit = handleSubmit(async (values) => {
             label="Contraseña"
             type="password"
             placeholder="••••••••"
+            autocomplete="current-password"
             :error="passwordError"
             required
           />

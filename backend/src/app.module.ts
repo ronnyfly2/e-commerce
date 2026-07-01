@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { join } from 'path';
 
@@ -10,6 +11,7 @@ import { GlobalExceptionFilter } from '@/shared/infrastructure/filters/domain-ex
 import { ResponseInterceptor } from '@/shared/infrastructure/interceptors/response.interceptor';
 import { JwtAuthGuard } from '@/shared/infrastructure/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@/shared/infrastructure/guards/permissions.guard';
+import { UPLOADS_DIR, UPLOADS_ROUTE } from '@/shared/infrastructure/uploads/uploads.constants';
 
 import { AuthModule } from '@/modules/auth/auth.module';
 import { CompaniesModule } from '@/modules/companies/companies.module';
@@ -20,8 +22,11 @@ import { StoresModule } from '@/modules/stores/stores.module';
 import { BrandsModule } from '@/modules/brands/brands.module';
 import { CategoriesModule } from '@/modules/categories/categories.module';
 import { ProductsModule } from '@/modules/products/products.module';
+import { ProductFeaturesModule } from '@/modules/product-features/product-features.module';
+import { InventoryModule } from '@/modules/inventory/inventory.module';
 import { CurrenciesModule } from '@/modules/currencies/currencies.module';
 import { OrdersModule } from '@/modules/orders/orders.module';
+import { UploadsModule } from '@/modules/uploads/uploads.module';
 
 @Module({
   imports: [
@@ -56,6 +61,11 @@ import { OrdersModule } from '@/modules/orders/orders.module';
       ],
     }),
 
+    ServeStaticModule.forRoot({
+      rootPath: UPLOADS_DIR,
+      serveRoot: UPLOADS_ROUTE,
+    }),
+
     AuthModule,
     CompaniesModule,
     RolesModule,
@@ -65,8 +75,11 @@ import { OrdersModule } from '@/modules/orders/orders.module';
     BrandsModule,
     CategoriesModule,
     ProductsModule,
+    ProductFeaturesModule,
+    InventoryModule,
     CurrenciesModule,
     OrdersModule,
+    UploadsModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },

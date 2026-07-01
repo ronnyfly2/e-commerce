@@ -14,6 +14,7 @@ export abstract class StoreRepository {
   abstract findById(id: string, companyId: string): Promise<StoreOrmEntity | null>;
   abstract findByCode(code: string, companyId: string): Promise<StoreOrmEntity | null>;
   abstract findAll(companyId: string, query: PaginationQueryDto): Promise<Page<StoreOrmEntity>>;
+  abstract findAllIds(companyId: string): Promise<string[]>;
   abstract update(id: string, data: Partial<StoreOrmEntity>): Promise<void>;
   abstract softDelete(id: string): Promise<void>;
 }
@@ -53,6 +54,11 @@ export class StoreRepositoryImpl implements StoreRepository {
 
     const [items, total] = await qb.getManyAndCount();
     return { items, meta: buildPaginationMeta(total, page, limit) };
+  }
+
+  async findAllIds(companyId: string): Promise<string[]> {
+    const rows = await this.repo.find({ where: { companyId, isActive: true }, select: { id: true } });
+    return rows.map((r) => r.id);
   }
 
   async update(id: string, data: Partial<StoreOrmEntity>): Promise<void> {

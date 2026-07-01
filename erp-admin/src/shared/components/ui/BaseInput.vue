@@ -8,6 +8,7 @@ defineProps<{
   type?: string;
   disabled?: boolean;
   required?: boolean;
+  autocomplete?: string;
 }>();
 
 defineEmits<{
@@ -29,6 +30,7 @@ defineEmits<{
       :type="type ?? 'text'"
       :placeholder="placeholder"
       :disabled="disabled"
+      :autocomplete="autocomplete"
       class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:cursor-not-allowed disabled:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-primary-400"
       :class="{ 'border-red-300 focus:border-red-500 focus:ring-red-500': error }"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"

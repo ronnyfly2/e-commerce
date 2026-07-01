@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, IsUUID, Matches, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Matches, Max, MaxLength, Min } from 'class-validator';
 
 export class CreateStoreDto {
   @ApiProperty()
@@ -22,4 +22,18 @@ export class CreateStoreDto {
   @IsOptional()
   @IsString()
   address?: string;
+
+  @ApiPropertyOptional({ example: -12.0464, description: 'Latitude (-90 to 90)' })
+  @IsOptional()
+  @IsNumber()
+  @Min(-90)
+  @Max(90)
+  latitude?: number;
+
+  @ApiPropertyOptional({ example: -77.0428, description: 'Longitude (-180 to 180)' })
+  @IsOptional()
+  @IsNumber()
+  @Min(-180)
+  @Max(180)
+  longitude?: number;
 }

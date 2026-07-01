@@ -22,6 +22,11 @@ export const API = {
   category: (id: string) => `/categories/${id}`,
   products: '/products',
   product: (id: string) => `/products/${id}`,
+  productStocks: (productId: string) => `/inventory/products/${productId}`,
+  productStock: (id: string) => `/inventory/${id}`,
+  productFeatures: '/product-features',
+  productFeaturesByProduct: (productId: string) => `/product-features/products/${productId}`,
+  productFeature: (id: string) => `/product-features/${id}`,
   currencies: '/currencies',
   currency: (id: string) => `/currencies/${id}`,
   currencyDefault: (id: string) => `/currencies/${id}/default`,
@@ -29,4 +34,5 @@ export const API = {
   order: (id: string) => `/orders/${id}`,
   orderStatus: (id: string) => `/orders/${id}/status`,
   orderPaymentStatus: (id: string) => `/orders/${id}/payment-status`,
+  uploadImage: '/uploads/image',
 } as const;

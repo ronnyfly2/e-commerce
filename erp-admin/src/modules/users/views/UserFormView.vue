@@ -182,6 +182,7 @@ const onSubmit = handleSubmit(async (values) => {
             v-model="password"
             label="Contraseña"
             type="password"
+            autocomplete="new-password"
             :placeholder="isEdit ? 'Dejar vacío para no cambiar' : '••••••••'"
             :error="passwordError"
             :required="!isEdit"
