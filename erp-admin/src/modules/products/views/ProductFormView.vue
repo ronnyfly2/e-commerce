@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useForm, useField } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
-import { toast } from 'vue-sonner';
+import { toast } from '@/shared/composables/useToast';
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 import { productApi } from '../api';
 import { categoryApi } from '@/modules/categories/api';

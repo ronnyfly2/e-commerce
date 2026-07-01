@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { defineAsyncComponent, onMounted } from 'vue';
+import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useForm, useField } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
-import { toast } from 'vue-sonner';
+import { toast } from '@/shared/composables/useToast';
+import { useAuthStore } from '@/shared/stores/auth.store';
 import { branchApi } from '../api';
-import { extractApiError } from '@/shared/types/api.types';
+import { companyApi } from '@/modules/companies/api';
+import type { Company } from '@/modules/companies/types';
+import { extractApiErrorList } from '@/shared/types/api.types';
 import PageHeader from '@/shared/components/common/PageHeader.vue';
 import BaseInput from '@/shared/components/ui/BaseInput.vue';
+import BaseSelect from '@/shared/components/ui/BaseSelect.vue';
 import BaseButton from '@/shared/components/ui/BaseButton.vue';
 
 const BranchMapPicker = defineAsyncComponent(() => import('../components/BranchMapPicker.vue'));
@@ -18,8 +22,16 @@ const router = useRouter();
 const id = route.params.id as string | undefined;
 const isEdit = !!id;
 
+const authStore = useAuthStore();
+const isSuperAdmin = computed(() => authStore.user?.isSuperAdmin ?? false);
+const companies = ref<Company[]>([]);
+const companyOptions = computed(() =>
+  companies.value.map((c) => ({ label: c.name, value: c.id })),
+);
+
 const schema = toTypedSchema(
   z.object({
+    companyId: isSuperAdmin.value ? z.uuid('Selecciona una empresa') : z.string().optional(),
     name: z.string().min(1, 'Requerido').max(100),
     code: z.string().regex(/^[A-Z0-9-]+$/, 'Solo mayúsculas, números y guiones').max(20),
     address: z.string().optional(),
@@ -30,6 +42,7 @@ const schema = toTypedSchema(
 );
 
 const { handleSubmit, isSubmitting, setValues, setFieldValue } = useForm({ validationSchema: schema });
+const { value: companyId, errorMessage: companyIdError } = useField<string>('companyId');
 const { value: name, errorMessage: nameError } = useField<string>('name');
 const { value: code, errorMessage: codeError } = useField<string>('code');
 const { value: address } = useField<string>('address');
@@ -38,9 +51,15 @@ const { value: latitude } = useField<number | null>('latitude');
 const { value: longitude } = useField<number | null>('longitude');
 
 onMounted(async () => {
+  if (isSuperAdmin.value) {
+    const result = await companyApi.getAll({ limit: 100 });
+    companies.value = result.items;
+  }
+
   if (isEdit && id) {
     const branch = await branchApi.getById(id);
     setValues({
+      companyId: branch.companyId,
       name: branch.name,
       code: branch.code,
       address: branch.address ?? '',
@@ -53,16 +72,25 @@ onMounted(async () => {
 
 const onSubmit = handleSubmit(async (values) => {
   try {
+    const { latitude, longitude, address, phone, companyId, ...required } = values;
+    const payload = {
+      ...required,
+      ...(isSuperAdmin.value && companyId ? { companyId } : {}),
+      ...(address ? { address } : {}),
+      ...(phone ? { phone } : {}),
+      ...(latitude != null ? { latitude: parseFloat(latitude.toFixed(7)) } : {}),
+      ...(longitude != null ? { longitude: parseFloat(longitude.toFixed(7)) } : {}),
+    };
     if (isEdit && id) {
-      await branchApi.update(id, values);
+      await branchApi.update(id, payload);
       toast.success('Sucursal actualizada');
     } else {
-      await branchApi.create(values);
+      await branchApi.create(payload);
       toast.success('Sucursal creada');
     }
     router.push('/branches');
   } catch (e) {
-    toast.error(extractApiError(e));
+    toast.errors(extractApiErrorList(e));
   }
 });
 </script>
@@ -75,6 +103,15 @@ const onSubmit = handleSubmit(async (values) => {
 
     <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
       <form class="space-y-5" @submit.prevent="onSubmit">
+        <BaseSelect
+          v-if="isSuperAdmin"
+          v-model="companyId"
+          label="Empresa"
+          placeholder="Selecciona una empresa"
+          :options="companyOptions"
+          :error="companyIdError"
+          required
+        />
         <BaseInput
           v-model="name"
           label="Nombre"
@@ -101,6 +138,7 @@ const onSubmit = handleSubmit(async (values) => {
             :longitude="longitude"
             @update:latitude="setFieldValue('latitude', $event)"
             @update:longitude="setFieldValue('longitude', $event)"
+            @update:address="setFieldValue('address', $event)"
           />
         </div>
 

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CompaniesModule } from '@/modules/companies/companies.module';
 import { BranchOrmEntity } from './infrastructure/persistence/branch.orm-entity';
 import {
   BranchRepository,
@@ -8,7 +9,7 @@ import {
 import { BranchController } from './infrastructure/http/branch.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BranchOrmEntity])],
+  imports: [TypeOrmModule.forFeature([BranchOrmEntity]), CompaniesModule],
   controllers: [BranchController],
   providers: [{ provide: BranchRepository, useClass: BranchRepositoryImpl }],
   exports: [BranchRepository],

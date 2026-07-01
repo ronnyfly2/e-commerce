@@ -4,7 +4,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { useForm, useField } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
-import { toast } from 'vue-sonner';
+import { toast } from '@/shared/composables/useToast';
 import { CubeIcon } from '@heroicons/vue/24/outline';
 import { useAuthStore } from '@/shared/stores/auth.store';
 import BaseInput from '@/shared/components/ui/BaseInput.vue';

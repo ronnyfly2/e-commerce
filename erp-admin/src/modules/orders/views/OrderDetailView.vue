@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { toast } from 'vue-sonner';
+import { toast } from '@/shared/composables/useToast';
 import { ArrowLeftIcon, TruckIcon, UserIcon, CurrencyDollarIcon } from '@heroicons/vue/24/outline';
 import { useOrderStore } from '../stores/order.store';
 import { orderApi } from '../api';

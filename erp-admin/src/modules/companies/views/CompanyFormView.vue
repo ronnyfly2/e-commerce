@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useForm, useField } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
-import { toast } from 'vue-sonner';
+import { toast } from '@/shared/composables/useToast';
 import { companyApi } from '../api';
 import { extractApiError } from '@/shared/types/api.types';
 import PageHeader from '@/shared/components/common/PageHeader.vue';

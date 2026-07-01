@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import * as dotenv from 'dotenv';
 import { AppDataSource } from '../data-source';
+import { seedDefaultCompany } from './company.seed';
 import { seedSuperAdmin } from './super-admin.seed';
 import { seedCurrencies } from './currencies.seed';
 import { seedRoles } from './roles.seed';
@@ -12,7 +13,8 @@ async function run(): Promise<void> {
   console.log('[seed] DB connected');
 
   try {
-    await seedSuperAdmin(AppDataSource);
+    const companyId = await seedDefaultCompany(AppDataSource);
+    await seedSuperAdmin(AppDataSource, companyId);
     await seedCurrencies(AppDataSource);
     await seedRoles(AppDataSource);
     console.log('[seed] done');

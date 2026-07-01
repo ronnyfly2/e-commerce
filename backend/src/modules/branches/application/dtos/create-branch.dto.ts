@@ -1,7 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, MaxLength, Matches, IsNumber, Min, Max } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength, Matches, IsNumber, Min, Max } from 'class-validator';
 
 export class CreateBranchDto {
+  @ApiPropertyOptional({ description: 'Target company UUID — only honored for super-admins; ignored otherwise' })
+  @IsOptional()
+  @IsUUID()
+  companyId?: string;
+
   @ApiProperty({ example: 'Main Branch' })
   @IsString()
   @IsNotEmpty()
@@ -27,14 +32,14 @@ export class CreateBranchDto {
 
   @ApiPropertyOptional({ example: -12.0464, description: 'Latitude (-90 to 90)' })
   @IsOptional()
-  @IsNumber({ maxDecimalPlaces: 7 })
+  @IsNumber()
   @Min(-90)
   @Max(90)
   latitude?: number;
 
   @ApiPropertyOptional({ example: -77.0428, description: 'Longitude (-180 to 180)' })
   @IsOptional()
-  @IsNumber({ maxDecimalPlaces: 7 })
+  @IsNumber()
   @Min(-180)
   @Max(180)
   longitude?: number;

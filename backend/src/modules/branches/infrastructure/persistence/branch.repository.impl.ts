@@ -11,9 +11,9 @@ import {
 
 export abstract class BranchRepository {
   abstract create(data: Partial<BranchOrmEntity>): Promise<BranchOrmEntity>;
-  abstract findById(id: string, companyId: string): Promise<BranchOrmEntity | null>;
+  abstract findById(id: string, companyId: string | null): Promise<BranchOrmEntity | null>;
   abstract findByCode(code: string, companyId: string): Promise<BranchOrmEntity | null>;
-  abstract findAll(companyId: string, query: PaginationQueryDto): Promise<Page<BranchOrmEntity>>;
+  abstract findAll(companyId: string | null, query: PaginationQueryDto): Promise<Page<BranchOrmEntity>>;
   abstract update(id: string, data: Partial<BranchOrmEntity>): Promise<void>;
   abstract softDelete(id: string): Promise<void>;
 }
@@ -29,25 +29,25 @@ export class BranchRepositoryImpl implements BranchRepository {
     return this.repo.save(this.repo.create(data));
   }
 
-  findById(id: string, companyId: string): Promise<BranchOrmEntity | null> {
-    return this.repo.findOne({ where: { id, companyId } });
+  findById(id: string, companyId: string | null): Promise<BranchOrmEntity | null> {
+    return this.repo.findOne({ where: companyId ? { id, companyId } : { id } });
   }
 
   findByCode(code: string, companyId: string): Promise<BranchOrmEntity | null> {
     return this.repo.findOne({ where: { code, companyId } });
   }
 
-  async findAll(companyId: string, query: PaginationQueryDto): Promise<Page<BranchOrmEntity>> {
+  async findAll(companyId: string | null, query: PaginationQueryDto): Promise<Page<BranchOrmEntity>> {
     const { page = 1, limit = 20, search } = query;
     const { skip, take } = paginationToSkipTake(page, limit);
 
     const qb = this.repo
       .createQueryBuilder('b')
-      .where('b.companyId = :companyId', { companyId })
       .orderBy('b.createdAt', 'DESC')
       .skip(skip)
       .take(take);
 
+    if (companyId) qb.where('b.companyId = :companyId', { companyId });
     if (search) qb.andWhere('b.name ILIKE :s', { s: `%${search}%` });
 
     const [items, total] = await qb.getManyAndCount();

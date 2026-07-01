@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { toast } from 'vue-sonner';
+import { toast } from '@/shared/composables/useToast';
 import { roleApi } from '../api';
 import { extractApiError } from '@/shared/types/api.types';
 import type { Permission } from '@/modules/auth/types';

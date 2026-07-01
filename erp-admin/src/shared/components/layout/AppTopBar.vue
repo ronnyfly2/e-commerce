@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Bars3Icon, MoonIcon, SunIcon, ArrowRightOnRectangleIcon } from '@heroicons/vue/24/outline';
 import { useRouter } from 'vue-router';
-import { toast } from 'vue-sonner';
+import { toast } from '@/shared/composables/useToast';
 import { useAuthStore } from '@/shared/stores/auth.store';
 import { useUiStore } from '@/shared/stores/ui.store';
 

@@ -19,6 +19,8 @@ export interface CreateBranchPayload {
   phone?: string;
   latitude?: number | null;
   longitude?: number | null;
+  /** Super-admin only — picks the target company; ignored for regular users */
+  companyId?: string;
 }
 
 export type UpdateBranchPayload = Partial<CreateBranchPayload & { isActive: boolean }>;

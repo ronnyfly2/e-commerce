@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+import { DataSource, IsNull } from 'typeorm';
 import { RoleOrmEntity } from '@/modules/roles/infrastructure/persistence/role.orm-entity';
 import { Permission } from '@/shared/domain/permission.enum';
 
@@ -160,7 +160,7 @@ export async function seedRoles(ds: DataSource): Promise<void> {
 
   for (const def of ROLES) {
     const existing = await repo.findOne({
-      where: { name: def.name, companyId: undefined },
+      where: { name: def.name, companyId: IsNull() },
     });
 
     if (existing) {

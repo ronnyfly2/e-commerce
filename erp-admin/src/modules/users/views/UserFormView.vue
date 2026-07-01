@@ -4,13 +4,13 @@ import { useRoute, useRouter } from 'vue-router';
 import { useForm, useField } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
-import { toast } from 'vue-sonner';
+import { toast } from '@/shared/composables/useToast';
 import { userApi } from '../api';
 import { roleApi } from '@/modules/roles/api';
 import type { Role } from '@/modules/roles/types';
 import type { Permission, PermissionGroup } from '@/modules/auth/types';
 import { PERMISSION_GROUPS } from '@/modules/auth/types';
-import { extractApiError } from '@/shared/types/api.types';
+import { extractApiErrorList } from '@/shared/types/api.types';
 import PageHeader from '@/shared/components/common/PageHeader.vue';
 import BaseInput from '@/shared/components/ui/BaseInput.vue';
 import BaseSelect from '@/shared/components/ui/BaseSelect.vue';
@@ -147,7 +147,7 @@ const onSubmit = handleSubmit(async (values) => {
     }
     router.push('/users');
   } catch (e) {
-    toast.error(extractApiError(e));
+    toast.errors(extractApiErrorList(e));
   }
 });
 </script>

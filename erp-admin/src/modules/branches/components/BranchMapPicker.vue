@@ -31,6 +31,7 @@ const { latitude, longitude } = defineProps<{
 const emit = defineEmits<{
   'update:latitude': [v: number];
   'update:longitude': [v: number];
+  'update:address': [v: string];
 }>();
 
 const mapContainer = useTemplateRef<HTMLDivElement>('mapContainer');
@@ -65,6 +66,7 @@ onMounted(() => {
     placeOrMoveMarker([e.latlng.lat, e.latlng.lng]);
     emit('update:latitude', e.latlng.lat);
     emit('update:longitude', e.latlng.lng);
+    reverseGeocode(e.latlng.lat, e.latlng.lng);
   });
 });
 
@@ -94,6 +96,7 @@ function placeOrMoveMarker(latlng: [number, number]) {
       const pos = marker!.getLatLng();
       emit('update:latitude', pos.lat);
       emit('update:longitude', pos.lng);
+      reverseGeocode(pos.lat, pos.lng);
     });
   }
 }
@@ -127,9 +130,26 @@ function selectResult(result: NominatimResult) {
   placeOrMoveMarker([lat, lng]);
   emit('update:latitude', lat);
   emit('update:longitude', lng);
+  emit('update:address', result.display_name);
   searchQuery.value = result.display_name;
   showDropdown.value = false;
   results.value = [];
+}
+
+async function reverseGeocode(lat: number, lng: number): Promise<void> {
+  isSearching.value = true;
+  try {
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+    const res = await fetch(url, { headers: { 'Accept-Language': 'es' } });
+    if (!res.ok) return;
+    const data = (await res.json()) as { display_name: string };
+    searchQuery.value = data.display_name;
+    emit('update:address', data.display_name);
+  } catch {
+    // el usuario puede escribir la dirección manualmente si falla
+  } finally {
+    isSearching.value = false;
+  }
 }
 
 function clearSearch() {
