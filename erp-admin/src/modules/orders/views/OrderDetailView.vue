@@ -116,6 +116,7 @@ function formatDate(iso: string | null) {
         <p v-if="order" class="text-sm text-gray-500">
           {{ ORDER_CHANNEL_LABELS[order.channel] }} ·
           {{ formatDate(order.createdAt) }}
+          <template v-if="order.store"> · {{ order.store.name }}</template>
         </p>
       </div>
     </div>

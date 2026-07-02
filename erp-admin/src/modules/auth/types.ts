@@ -23,6 +23,8 @@ export type Permission =
   | 'payment:view' | 'payment:process' | 'payment:refund'
   // Customers
   | 'customer:view' | 'customer:create' | 'customer:update' | 'customer:delete'
+  // Deals
+  | 'deal:view' | 'deal:create' | 'deal:update' | 'deal:delete'
   // Discounts
   | 'discount:view' | 'discount:manage'
   // Reports
@@ -133,6 +135,15 @@ export const PERMISSION_GROUPS: PermissionGroup[] = [
       { value: 'customer:create', label: 'Crear' },
       { value: 'customer:update', label: 'Editar' },
       { value: 'customer:delete', label: 'Eliminar' },
+    ],
+  },
+  {
+    label: 'Pipeline (Deals)',
+    permissions: [
+      { value: 'deal:view', label: 'Ver' },
+      { value: 'deal:create', label: 'Crear' },
+      { value: 'deal:update', label: 'Editar' },
+      { value: 'deal:delete', label: 'Eliminar' },
     ],
   },
   {

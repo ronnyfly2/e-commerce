@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { toast } from '@/shared/composables/useToast';
 import { PlusIcon, TrashIcon } from '@heroicons/vue/24/outline';
@@ -12,6 +12,9 @@ import {
   formatCents,
 } from '../types';
 import { extractApiError } from '@/shared/types/api.types';
+import { storeApi } from '@/modules/stores/api';
+import { productApi } from '@/modules/products/api';
+import { productBundleApi } from '@/modules/product-bundles/api';
 import BaseButton from '@/shared/components/ui/BaseButton.vue';
 import BaseInput from '@/shared/components/ui/BaseInput.vue';
 import BaseSelect from '@/shared/components/ui/BaseSelect.vue';
@@ -19,6 +22,30 @@ import DeliveryAddressPicker from '../components/DeliveryAddressPicker.vue';
 
 const router = useRouter();
 const isSubmitting = ref(false);
+
+// ─── Catalog (for stock-aware items) ────────────────────────────────────────────
+const storeOptions = ref<{ label: string; value: string }[]>([]);
+const storeId = ref('');
+const catalogOptions = ref<{ label: string; value: string }[]>([]);
+const catalogById = new Map<string, { name: string; sku: string; price: number; kind: 'product' | 'bundle' }>();
+
+onMounted(async () => {
+  const [stores, products, bundles] = await Promise.all([
+    storeApi.getAll({ limit: 100 }),
+    productApi.getAll({ limit: 100 }),
+    productBundleApi.getAll({ limit: 100 }),
+  ]);
+  storeOptions.value = stores.items.map((s) => ({ label: s.name, value: s.id }));
+
+  products.items.forEach((p) => catalogById.set(`product:${p.id}`, { name: p.name, sku: p.sku, price: Number(p.price), kind: 'product' }));
+  bundles.items.forEach((b) => catalogById.set(`bundle:${b.id}`, { name: b.name, sku: `${b.items.length} productos`, price: Number(b.price), kind: 'bundle' }));
+
+  catalogOptions.value = [
+    { label: '— Artículo personalizado (no descuenta stock) —', value: '' },
+    ...products.items.map((p) => ({ label: `${p.name} (${p.sku})`, value: `product:${p.id}` })),
+    ...bundles.items.map((b) => ({ label: `📦 ${b.name}`, value: `bundle:${b.id}` })),
+  ];
+});
 
 // ─── Form state ────────────────────────────────────────────────────────────────
 const channel = ref<OrderChannel>('ADMIN');
@@ -42,20 +69,35 @@ const shippingCents = ref(0);
 const notes = ref('');
 
 interface ItemRow {
+  catalogRef: string; // 'product:<id>' | 'bundle:<id>' | '' for a free-text custom item
   productName: string;
   productSku: string;
   quantity: number;
   unitPrice: number; // in major units (e.g. 49.99 USD)
 }
 
-const items = ref<ItemRow[]>([{ productName: '', productSku: '', quantity: 1, unitPrice: 0 }]);
+function emptyItem(): ItemRow {
+  return { catalogRef: '', productName: '', productSku: '', quantity: 1, unitPrice: 0 };
+}
+
+const items = ref<ItemRow[]>([emptyItem()]);
 
 function addItem() {
-  items.value.push({ productName: '', productSku: '', quantity: 1, unitPrice: 0 });
+  items.value.push(emptyItem());
 }
 
 function removeItem(index: number) {
   if (items.value.length > 1) items.value.splice(index, 1);
+}
+
+/** Selecting a catalog product/bundle auto-fills name, SKU and price — stock only decrements for catalog items. */
+function onCatalogPicked(item: ItemRow, ref: string) {
+  item.catalogRef = ref;
+  const entry = catalogById.get(ref);
+  if (!entry) return;
+  item.productName = entry.name;
+  item.productSku = entry.sku;
+  item.unitPrice = entry.price;
 }
 
 // ─── Derived totals ─────────────────────────────────────────────────────────
@@ -74,6 +116,7 @@ const errors = ref<Record<string, string>>({});
 function validate(): boolean {
   errors.value = {};
   if (!customerName.value.trim()) errors.value.customerName = 'Nombre del cliente requerido';
+  if (!storeId.value) errors.value.store = 'Selecciona la tienda que atenderá el pedido';
   if (deliveryType.value === 'DELIVERY' && !deliveryAddress.value.trim()) {
     errors.value.deliveryAddress = 'Dirección de entrega requerida';
   }
@@ -95,6 +138,8 @@ async function submit() {
   isSubmitting.value = true;
 
   const payload: CreateOrderItemPayload[] = items.value.map((i) => ({
+    productId: i.catalogRef.startsWith('product:') ? i.catalogRef.slice('product:'.length) : undefined,
+    bundleId: i.catalogRef.startsWith('bundle:') ? i.catalogRef.slice('bundle:'.length) : undefined,
     productName: i.productName.trim(),
     productSku: i.productSku.trim() || undefined,
     quantity: i.quantity,
@@ -105,6 +150,7 @@ async function submit() {
     const order = await orderApi.create({
       channel: channel.value,
       deliveryType: deliveryType.value,
+      storeId: storeId.value || undefined,
       customerName: customerName.value.trim(),
       customerEmail: customerEmail.value.trim() || undefined,
       customerPhone: customerPhone.value.trim() || undefined,
@@ -153,10 +199,20 @@ const currencyOptions = [
       <!-- Channel & delivery type -->
       <div class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-900">
         <h2 class="mb-4 font-semibold text-gray-900 dark:text-white">Canal y entrega</h2>
-        <div class="grid gap-4 sm:grid-cols-3">
+        <div class="grid gap-4 sm:grid-cols-4">
           <BaseSelect v-model="channel" :options="channelOptions" label="Canal de venta" />
           <BaseSelect v-model="deliveryType" :options="deliveryTypeOptions" label="Tipo de entrega" />
           <BaseSelect v-model="currencyCode" :options="currencyOptions" label="Moneda" />
+          <div>
+            <BaseSelect
+              v-model="storeId"
+              :options="storeOptions"
+              label="Tienda *"
+              placeholder="Selecciona una tienda"
+              :error="errors.store"
+            />
+            <p class="mt-1 text-xs text-gray-400">El stock se descuenta de aquí al confirmar el pedido</p>
+          </div>
         </div>
       </div>
 
@@ -234,8 +290,17 @@ const currencyOptions = [
           <div
             v-for="(item, index) in items"
             :key="index"
-            class="grid gap-3 rounded-lg border border-gray-100 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800 sm:grid-cols-12"
+            class="rounded-lg border border-gray-100 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800"
           >
+            <div class="mb-3">
+              <BaseSelect
+                :model-value="item.catalogRef"
+                :options="catalogOptions"
+                label="Producto o paquete del catálogo (opcional)"
+                @update:model-value="onCatalogPicked(item, String($event))"
+              />
+            </div>
+            <div class="grid gap-3 sm:grid-cols-12">
             <div class="sm:col-span-5">
               <BaseInput v-model="item.productName" label="Producto *" placeholder="Nombre del producto" />
             </div>
@@ -270,6 +335,7 @@ const currencyOptions = [
               >
                 <TrashIcon class="h-4 w-4" />
               </button>
+            </div>
             </div>
           </div>
         </div>

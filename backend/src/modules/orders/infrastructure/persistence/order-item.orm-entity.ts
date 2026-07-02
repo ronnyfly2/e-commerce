@@ -16,6 +16,10 @@ export class OrderItemOrmEntity {
   @Column({ name: 'product_id', type: 'uuid', nullable: true })
   productId: string | null;
 
+  /** Set when this line is a bundle purchase — stock is decremented per bundle component, not this column. */
+  @Column({ name: 'bundle_id', type: 'uuid', nullable: true })
+  bundleId: string | null;
+
   @Column({ name: 'product_name', type: 'varchar', length: 255 })
   productName: string;
 

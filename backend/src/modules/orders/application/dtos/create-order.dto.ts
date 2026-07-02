@@ -13,6 +13,11 @@ export class CreateOrderItemDto {
   @IsUUID()
   productId?: string;
 
+  @ApiPropertyOptional({ description: 'Bundle UUID from catalog — stock is decremented per bundle component' })
+  @IsOptional()
+  @IsUUID()
+  bundleId?: string;
+
   @ApiProperty({ example: 'Premium Leather Wallet' })
   @IsString()
   @IsNotEmpty()
@@ -133,6 +138,11 @@ export class CreateOrderDto {
   @IsOptional()
   @IsUUID()
   branchId?: string;
+
+  @ApiPropertyOptional({ description: 'Store fulfilling this order — required before it can be confirmed (stock is decremented from here)' })
+  @IsOptional()
+  @IsUUID()
+  storeId?: string;
 
   @ApiPropertyOptional({ description: 'Staff member UUID to assign this order to' })
   @IsOptional()

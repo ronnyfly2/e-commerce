@@ -1,3 +1,18 @@
+export const PRODUCT_UNITS = [
+  { value: 'unit', label: 'Unidad' },
+  { value: 'kg', label: 'Kilogramo (kg)' },
+  { value: 'g', label: 'Gramo (g)' },
+  { value: 'l', label: 'Litro (L)' },
+  { value: 'ml', label: 'Mililitro (mL)' },
+  { value: 'm', label: 'Metro (m)' },
+  { value: 'cm', label: 'Centímetro (cm)' },
+  { value: 'pair', label: 'Par' },
+  { value: 'box', label: 'Caja' },
+  { value: 'pack', label: 'Paquete' },
+] as const;
+
+export type ProductUnit = (typeof PRODUCT_UNITS)[number]['value'];
+
 export interface Product {
   id: string;
   companyId: string;
@@ -13,7 +28,9 @@ export interface Product {
   /** Denormalized total — sum of per-store quantities, synced server-side on every inventory adjustment. */
   stock: number;
   minStock: number;
-  unit: string;
+  color: string | null;
+  weight: number | null;
+  unit: ProductUnit;
   imageUrl: string | null;
   images: string[] | null;
   isActive: boolean;
@@ -32,7 +49,9 @@ export interface CreateProductPayload {
   compareAtPrice?: number;
   costPrice?: number;
   minStock?: number;
-  unit?: string;
+  color?: string;
+  weight?: number;
+  unit?: ProductUnit;
   categoryId?: string;
   brandId?: string;
   imageUrl?: string;

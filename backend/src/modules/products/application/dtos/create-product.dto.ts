@@ -1,9 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsBoolean, IsInt, IsNotEmpty, IsNumber, IsOptional,
+  IsArray, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional,
   IsPositive, IsString, IsUUID, Matches, MaxLength, Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ProductUnit } from '../../domain/product-unit.enum';
 
 export class CreateProductDto {
   @ApiProperty({ example: 'Premium Leather Wallet' })
@@ -55,11 +56,23 @@ export class CreateProductDto {
   @Min(0)
   minStock?: number;
 
-  @ApiPropertyOptional({ default: 'unit' })
+  @ApiPropertyOptional({ example: 'Rojo' })
   @IsOptional()
   @IsString()
-  @MaxLength(20)
-  unit?: string;
+  @MaxLength(50)
+  color?: string;
+
+  @ApiPropertyOptional({ example: 0.5, description: 'Peso en kilogramos' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({ maxDecimalPlaces: 3 })
+  @Min(0)
+  weight?: number;
+
+  @ApiPropertyOptional({ enum: ProductUnit, default: ProductUnit.UNIT })
+  @IsOptional()
+  @IsEnum(ProductUnit)
+  unit?: ProductUnit;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -76,4 +89,11 @@ export class CreateProductDto {
   @IsString()
   @MaxLength(255)
   imageUrl?: string;
+
+  @ApiPropertyOptional({ type: [String] })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @MaxLength(500, { each: true })
+  images?: string[];
 }

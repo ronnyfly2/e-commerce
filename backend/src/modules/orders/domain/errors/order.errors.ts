@@ -39,3 +39,23 @@ export class OrderDeliveryAddressRequiredError extends DomainError {
     );
   }
 }
+
+export class OrderMissingStoreError extends DomainError {
+  constructor() {
+    super(
+      'ORDER_MISSING_STORE',
+      'Order must have a store assigned before it can be confirmed',
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
+
+export class InsufficientStockError extends DomainError {
+  constructor(productId: string) {
+    super(
+      'INSUFFICIENT_STOCK',
+      `Not enough stock for product ${productId} at the selected store`,
+      HttpStatus.CONFLICT,
+    );
+  }
+}

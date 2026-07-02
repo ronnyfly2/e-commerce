@@ -181,6 +181,24 @@ const router = createRouter({
           component: () => import('@/modules/products/views/ProductFormView.vue'),
           meta: { permissions: ['product:update'] },
         },
+        {
+          path: 'bundles',
+          name: 'bundles',
+          component: () => import('@/modules/product-bundles/views/BundleListView.vue'),
+          meta: { permissions: ['product:view'] },
+        },
+        {
+          path: 'bundles/new',
+          name: 'bundles.create',
+          component: () => import('@/modules/product-bundles/views/BundleFormView.vue'),
+          meta: { permissions: ['product:create'] },
+        },
+        {
+          path: 'bundles/:id/edit',
+          name: 'bundles.edit',
+          component: () => import('@/modules/product-bundles/views/BundleFormView.vue'),
+          meta: { permissions: ['product:update'] },
+        },
 
         // ─── Currencies ──────────────────────────────────────────────────────
         {
@@ -188,6 +206,54 @@ const router = createRouter({
           name: 'currencies',
           component: () => import('@/modules/currencies/views/CurrencyListView.vue'),
           meta: { permissions: ['currency:view'] },
+        },
+
+        // ─── CRM: Customers ──────────────────────────────────────────────────
+        {
+          path: 'customers',
+          name: 'customers',
+          component: () => import('@/modules/customers/views/CustomerListView.vue'),
+          meta: { permissions: ['customer:view'] },
+        },
+        {
+          path: 'customers/new',
+          name: 'customers.create',
+          component: () => import('@/modules/customers/views/CustomerFormView.vue'),
+          meta: { permissions: ['customer:create'] },
+        },
+        {
+          path: 'customers/:id',
+          name: 'customers.detail',
+          component: () => import('@/modules/customers/views/CustomerDetailView.vue'),
+          meta: { permissions: ['customer:view'] },
+        },
+        {
+          path: 'customers/:id/edit',
+          name: 'customers.edit',
+          component: () => import('@/modules/customers/views/CustomerFormView.vue'),
+          meta: { permissions: ['customer:update'] },
+        },
+
+        // ─── CRM: Deals (sales pipeline) ────────────────────────────────────
+        {
+          path: 'deals',
+          name: 'deals',
+          component: () => import('@/modules/deals/views/DealPipelineView.vue'),
+          meta: { permissions: ['deal:view'] },
+        },
+        {
+          path: 'deals/new',
+          name: 'deals.create',
+          component: () => import('@/modules/deals/views/DealFormView.vue'),
+          meta: { permissions: ['deal:create'] },
+        },
+
+        // ─── CRM: WhatsApp ───────────────────────────────────────────────────
+        {
+          path: 'whatsapp/rules',
+          name: 'whatsapp.rules',
+          component: () => import('@/modules/whatsapp/views/WhatsAppRulesView.vue'),
+          meta: { permissions: ['customer:update'] },
         },
 
         // ─── Orders ──────────────────────────────────────────────────────────

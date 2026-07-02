@@ -24,4 +24,14 @@ export const envValidationSchema = Joi.object({
   // Throttle
   THROTTLE_TTL_MS: Joi.number().default(60000),
   THROTTLE_LIMIT: Joi.number().default(100),
+
+  // WhatsApp (Meta Cloud API) — optional, see docs/whatsapp-meta-setup.md
+  WHATSAPP_PHONE_NUMBER_ID: Joi.string().optional(),
+  WHATSAPP_BUSINESS_ACCOUNT_ID: Joi.string().optional(),
+  WHATSAPP_ACCESS_TOKEN: Joi.string().optional(),
+  WHATSAPP_WEBHOOK_VERIFY_TOKEN: Joi.string().optional(),
+  WHATSAPP_APP_SECRET: Joi.string().optional(),
+  WHATSAPP_API_VERSION: Joi.string().default('v21.0'),
+  // UUID of the company this WhatsApp number belongs to — one phone number per deployment for now.
+  WHATSAPP_COMPANY_ID: Joi.string().uuid().optional(),
 });

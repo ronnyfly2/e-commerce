@@ -3,12 +3,16 @@ import { RouterLink, useRoute } from 'vue-router';
 import {
   BuildingOffice2Icon,
   BuildingStorefrontIcon,
+  ChatBubbleLeftRightIcon,
   ClipboardDocumentListIcon,
   CubeIcon,
   CurrencyDollarIcon,
+  FunnelIcon,
+  GiftIcon,
   HomeIcon,
   ShoppingBagIcon,
   TagIcon,
+  UserGroupIcon,
   UsersIcon,
   WrenchScrewdriverIcon,
   MapPinIcon,
@@ -31,8 +35,12 @@ const navItems = [
   { label: 'Marcas', to: '/brands', icon: StarIcon, permission: 'brand:view' as const },
   { label: 'Categorías', to: '/categories', icon: TagIcon, permission: 'category:view' as const },
   { label: 'Productos', to: '/products', icon: ShoppingBagIcon, permission: 'product:view' as const },
+  { label: 'Paquetes', to: '/bundles', icon: GiftIcon, permission: 'product:view' as const },
   { label: 'Monedas', to: '/currencies', icon: CurrencyDollarIcon, permission: 'currency:view' as const },
   { label: 'Pedidos', to: '/orders', icon: ClipboardDocumentListIcon, permission: 'order:view' as const },
+  { label: 'Clientes', to: '/customers', icon: UserGroupIcon, permission: 'customer:view' as const },
+  { label: 'Pipeline', to: '/deals', icon: FunnelIcon, permission: 'deal:view' as const },
+  { label: 'WhatsApp', to: '/whatsapp/rules', icon: ChatBubbleLeftRightIcon, permission: 'customer:update' as const },
 ];
 
 const visible = navItems.filter((item) =>

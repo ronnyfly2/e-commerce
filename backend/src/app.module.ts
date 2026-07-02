@@ -23,10 +23,15 @@ import { BrandsModule } from '@/modules/brands/brands.module';
 import { CategoriesModule } from '@/modules/categories/categories.module';
 import { ProductsModule } from '@/modules/products/products.module';
 import { ProductFeaturesModule } from '@/modules/product-features/product-features.module';
+import { ProductPriceTiersModule } from '@/modules/product-price-tiers/product-price-tiers.module';
+import { ProductBundlesModule } from '@/modules/product-bundles/product-bundles.module';
 import { InventoryModule } from '@/modules/inventory/inventory.module';
 import { CurrenciesModule } from '@/modules/currencies/currencies.module';
 import { OrdersModule } from '@/modules/orders/orders.module';
 import { UploadsModule } from '@/modules/uploads/uploads.module';
+import { CustomersModule } from '@/modules/customers/customers.module';
+import { DealsModule } from '@/modules/deals/deals.module';
+import { WhatsAppModule } from '@/modules/whatsapp/whatsapp.module';
 
 @Module({
   imports: [
@@ -76,10 +81,15 @@ import { UploadsModule } from '@/modules/uploads/uploads.module';
     CategoriesModule,
     ProductsModule,
     ProductFeaturesModule,
+    ProductPriceTiersModule,
+    ProductBundlesModule,
     InventoryModule,
     CurrenciesModule,
     OrdersModule,
     UploadsModule,
+    CustomersModule,
+    DealsModule,
+    WhatsAppModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },

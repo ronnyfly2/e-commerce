@@ -1,7 +1,9 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, Unique } from 'typeorm';
 import { BaseOrmEntity } from '@/shared/domain/base-orm.entity';
+import { numericTransformer } from '@/shared/infrastructure/persistence/numeric.transformer';
 import { BrandOrmEntity } from '@/modules/brands/infrastructure/persistence/brand.orm-entity';
 import { CategoryOrmEntity } from '@/modules/categories/infrastructure/persistence/category.orm-entity';
+import { ProductUnit } from '../../domain/product-unit.enum';
 
 @Entity('products')
 @Unique(['companyId', 'sku'])
@@ -44,8 +46,14 @@ export class ProductOrmEntity extends BaseOrmEntity {
   @Column({ name: 'min_stock', default: 0 })
   minStock: number;
 
-  @Column({ length: 20, default: 'unit' })
-  unit: string;
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  color: string | null;
+
+  @Column({ type: 'decimal', precision: 10, scale: 3, nullable: true, transformer: numericTransformer })
+  weight: number | null;
+
+  @Column({ type: 'enum', enum: ProductUnit, default: ProductUnit.UNIT })
+  unit: ProductUnit;
 
   @Column({ name: 'image_url', type: 'varchar', length: 255, nullable: true })
   imageUrl: string | null;

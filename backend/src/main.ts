@@ -8,6 +8,7 @@ import { AppModule } from './app.module';
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log'],
+    rawBody: true, // needed to verify Meta's X-Hub-Signature-256 on the WhatsApp webhook
   });
 
   const prefix = process.env.API_PREFIX ?? 'api/v1';

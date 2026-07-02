@@ -36,6 +36,8 @@ const ROLES: RoleDef[] = [
       Permission.PAYMENT_VIEW, Permission.PAYMENT_PROCESS, Permission.PAYMENT_REFUND,
       // Customers
       Permission.CUSTOMER_VIEW, Permission.CUSTOMER_CREATE, Permission.CUSTOMER_UPDATE, Permission.CUSTOMER_DELETE,
+      // Deals (CRM pipeline)
+      Permission.DEAL_VIEW, Permission.DEAL_CREATE, Permission.DEAL_UPDATE, Permission.DEAL_DELETE,
       // Discounts
       Permission.DISCOUNT_VIEW, Permission.DISCOUNT_MANAGE,
       // Reports
@@ -72,6 +74,8 @@ const ROLES: RoleDef[] = [
       Permission.PAYMENT_VIEW, Permission.PAYMENT_PROCESS, Permission.PAYMENT_REFUND,
       // Customers
       Permission.CUSTOMER_VIEW, Permission.CUSTOMER_CREATE, Permission.CUSTOMER_UPDATE,
+      // Deals (CRM pipeline)
+      Permission.DEAL_VIEW, Permission.DEAL_CREATE, Permission.DEAL_UPDATE, Permission.DEAL_DELETE,
       // Discounts
       Permission.DISCOUNT_VIEW, Permission.DISCOUNT_MANAGE,
       // Reports
@@ -94,6 +98,8 @@ const ROLES: RoleDef[] = [
       Permission.ORDER_VIEW, Permission.ORDER_EXPORT,
       // Customers (view + create)
       Permission.CUSTOMER_VIEW, Permission.CUSTOMER_CREATE, Permission.CUSTOMER_UPDATE,
+      // Deals (CRM pipeline)
+      Permission.DEAL_VIEW, Permission.DEAL_CREATE, Permission.DEAL_UPDATE, Permission.DEAL_DELETE,
       // Discounts (full)
       Permission.DISCOUNT_VIEW, Permission.DISCOUNT_MANAGE,
       // Reports
@@ -120,6 +126,8 @@ const ROLES: RoleDef[] = [
       Permission.PAYMENT_VIEW, Permission.PAYMENT_PROCESS,
       // Customers
       Permission.CUSTOMER_VIEW, Permission.CUSTOMER_CREATE, Permission.CUSTOMER_UPDATE,
+      // Deals (CRM pipeline)
+      Permission.DEAL_VIEW, Permission.DEAL_CREATE, Permission.DEAL_UPDATE,
       // Dashboard
       Permission.DASHBOARD_VIEW,
     ],

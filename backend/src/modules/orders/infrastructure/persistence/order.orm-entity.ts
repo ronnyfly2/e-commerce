@@ -3,6 +3,7 @@ import {
 } from 'typeorm';
 import { BaseOrmEntity } from '@/shared/domain/base-orm.entity';
 import { BranchOrmEntity } from '@/modules/branches/infrastructure/persistence/branch.orm-entity';
+import { StoreOrmEntity } from '@/modules/stores/infrastructure/persistence/store.orm-entity';
 import { OrderStatus } from '../../domain/enums/order-status.enum';
 import { OrderChannel } from '../../domain/enums/order-channel.enum';
 import { PaymentStatus } from '../../domain/enums/payment-status.enum';
@@ -18,6 +19,13 @@ export class OrderOrmEntity extends BaseOrmEntity {
 
   @Column({ name: 'branch_id', type: 'uuid', nullable: true })
   branchId: string | null;
+
+  @Column({ name: 'store_id', type: 'uuid', nullable: true })
+  storeId: string | null;
+
+  /** Set once stock has been decremented for this order (on CONFIRMED) — guards against double-decrement/restore. */
+  @Column({ name: 'stock_decremented', default: false })
+  stockDecremented: boolean;
 
   @Index({ unique: true })
   @Column({ name: 'order_number', type: 'varchar', length: 40 })
@@ -114,4 +122,8 @@ export class OrderOrmEntity extends BaseOrmEntity {
   @ManyToOne(() => BranchOrmEntity, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'branch_id' })
   branch: BranchOrmEntity | null;
+
+  @ManyToOne(() => StoreOrmEntity, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'store_id' })
+  store: StoreOrmEntity | null;
 }

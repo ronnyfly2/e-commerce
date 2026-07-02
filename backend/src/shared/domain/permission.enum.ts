@@ -73,6 +73,12 @@ export enum Permission {
   DISCOUNT_VIEW = 'discount:view',
   DISCOUNT_MANAGE = 'discount:manage',
 
+  // ─── Deals (CRM sales pipeline) ─────────────────────────────────────────────
+  DEAL_VIEW = 'deal:view',
+  DEAL_CREATE = 'deal:create',
+  DEAL_UPDATE = 'deal:update',
+  DEAL_DELETE = 'deal:delete',
+
   // ─── Reports ──────────────────────────────────────────────────────────────
   REPORT_VIEW = 'report:view',
   REPORT_EXPORT = 'report:export',

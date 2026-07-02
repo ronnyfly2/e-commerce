@@ -17,6 +17,7 @@ export interface OrderItem {
   id: string;
   orderId: string;
   productId: string | null;
+  bundleId: string | null;
   productName: string;
   productSku: string | null;
   quantity: number;
@@ -42,6 +43,8 @@ export interface Order {
   id: string;
   companyId: string;
   branchId: string | null;
+  storeId: string | null;
+  store?: { id: string; name: string } | null;
   orderNumber: string;
   channel: OrderChannel;
   status: OrderStatus;
@@ -76,6 +79,7 @@ export interface Order {
 
 export interface CreateOrderItemPayload {
   productId?: string;
+  bundleId?: string;
   productName: string;
   productSku?: string;
   quantity: number;
@@ -101,6 +105,7 @@ export interface CreateOrderPayload {
   currencyCode: string;
   notes?: string;
   branchId?: string;
+  storeId?: string;
   assignedToId?: string;
   items: CreateOrderItemPayload[];
 }
