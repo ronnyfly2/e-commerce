@@ -50,6 +50,7 @@ export interface Order {
   status: OrderStatus;
   paymentStatus: PaymentStatus;
   deliveryType: DeliveryType;
+  customerId: string | null;
   customerName: string;
   customerEmail: string | null;
   customerPhone: string | null;
@@ -90,6 +91,7 @@ export interface CreateOrderItemPayload {
 export interface CreateOrderPayload {
   channel: OrderChannel;
   deliveryType: DeliveryType;
+  customerId?: string;
   customerName: string;
   customerEmail?: string;
   customerPhone?: string;
@@ -127,6 +129,7 @@ export interface OrderFilters {
   channel?: OrderChannel;
   paymentStatus?: PaymentStatus;
   branchId?: string;
+  customerId?: string;
   dateFrom?: string;
   dateTo?: string;
 }

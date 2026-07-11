@@ -5,6 +5,9 @@ import { seedDefaultCompany } from './company.seed';
 import { seedSuperAdmin } from './super-admin.seed';
 import { seedCurrencies } from './currencies.seed';
 import { seedRoles } from './roles.seed';
+import { seedUsers } from './users.seed';
+import { seedCategories } from './categories.seed';
+import { seedCustomers } from './customers.seed';
 
 dotenv.config();
 
@@ -17,6 +20,9 @@ async function run(): Promise<void> {
     await seedSuperAdmin(AppDataSource, companyId);
     await seedCurrencies(AppDataSource);
     await seedRoles(AppDataSource);
+    await seedCategories(AppDataSource, companyId);
+    await seedCustomers(AppDataSource, companyId);
+    await seedUsers(AppDataSource, companyId);
     console.log('[seed] done');
   } finally {
     await AppDataSource.destroy();

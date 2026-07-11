@@ -53,9 +53,15 @@ const schema = toTypedSchema(z.object({
   unit: z.enum(PRODUCT_UNITS.map((u) => u.value) as [ProductUnit, ...ProductUnit[]]),
   categoryId: z.string().uuid('Selecciona una categoría'),
   brandId: z.string().uuid().optional().or(z.literal('')),
+  pointsAwarded: z.coerce.number().int().min(0),
 }));
 
-const { handleSubmit, isSubmitting, setValues } = useForm({ validationSchema: schema });
+// Defaults go through initialValues (not setValues) — setValues validates the whole form immediately,
+// which would show "required" errors on sku/name/slug/price/categoryId before the user touches anything.
+const { handleSubmit, isSubmitting, setValues } = useForm({
+  validationSchema: schema,
+  initialValues: { minStock: 0, brandId: '', unit: 'unit', pointsAwarded: 0 },
+});
 const { value: sku, errorMessage: skuError } = useField<string>('sku');
 const { value: name, errorMessage: nameError } = useField<string>('name');
 const { value: slug, errorMessage: slugError } = useField<string>('slug');
@@ -69,6 +75,7 @@ const { value: weight } = useField<number | ''>('weight');
 const { value: unit } = useField<ProductUnit>('unit');
 const { value: categoryId, errorMessage: categoryError } = useField<string>('categoryId');
 const { value: brandId } = useField<string>('brandId');
+const { value: pointsAwarded } = useField<number>('pointsAwarded');
 
 /** Includes the selected category and every ancestor up the tree, e.g. ["Polo", "Ropa"] — so category-based
  * suggestions (talla, material…) also trigger from a parent category, not just an exact match. */
@@ -112,9 +119,8 @@ onMounted(async () => {
       costPrice: p.costPrice ? Number(p.costPrice) : '', minStock: p.minStock,
       color: p.color ?? '', weight: p.weight ?? '', unit: p.unit,
       categoryId: p.categoryId, brandId: p.brandId ?? '',
+      pointsAwarded: p.pointsAwarded,
     });
-  } else {
-    setValues({ minStock: 0, brandId: '', unit: 'unit' });
   }
 });
 
@@ -219,6 +225,21 @@ const onSubmit = handleSubmit(async (values) => {
             />
             <p v-if="toUsd(costPrice)" class="mt-1 text-xs text-gray-400">≈ ${{ toUsd(costPrice) }} USD</p>
           </div>
+        </div>
+      </div>
+
+      <!-- Puntos de fidelidad -->
+      <div class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-900">
+        <h3 class="mb-4 text-sm font-semibold text-gray-900 dark:text-white">Puntos de fidelidad</h3>
+        <div class="w-40">
+          <BaseInput
+            v-model.number="pointsAwarded"
+            label="Puntos por unidad"
+            type="number"
+            step="1"
+            placeholder="0"
+            hint="Puntos que gana el cliente por cada unidad comprada, acreditados cuando el pago se marca como Pagado"
+          />
         </div>
       </div>
 

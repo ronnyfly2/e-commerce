@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import { CurrencyOrmEntity } from '@/modules/currencies/infrastructure/persistence/currency.orm-entity';
 
-const INITIAL_CURRENCIES: Omit<CurrencyOrmEntity, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>[] = [
+export const INITIAL_CURRENCIES: Omit<CurrencyOrmEntity, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>[] = [
   { code: 'USD', name: 'Dólar Estadounidense', symbol: '$',  exchangeRate: 1.000000, isDefault: true,  isActive: true },
   { code: 'PEN', name: 'Sol Peruano',          symbol: 'S/', exchangeRate: 3.710000, isDefault: false, isActive: true },
   { code: 'CLP', name: 'Peso Chileno',         symbol: '$',  exchangeRate: 935.0000, isDefault: false, isActive: true },

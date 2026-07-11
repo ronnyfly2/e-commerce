@@ -26,6 +26,11 @@ export class OrderFiltersDto extends PaginationQueryDto {
   @IsUUID()
   branchId?: string;
 
+  @ApiPropertyOptional({ description: 'CRM customer UUID' })
+  @IsOptional()
+  @IsUUID()
+  customerId?: string;
+
   @ApiPropertyOptional({ example: '2024-01-01' })
   @IsOptional()
   @IsDateString()

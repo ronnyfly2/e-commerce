@@ -100,6 +100,12 @@ const router = createRouter({
           meta: { permissions: ['user:create'] },
         },
         {
+          path: 'users/:id',
+          name: 'users.detail',
+          component: () => import('@/modules/users/views/UserDetailView.vue'),
+          meta: { permissions: ['user:view'] },
+        },
+        {
           path: 'users/:id/edit',
           name: 'users.edit',
           component: () => import('@/modules/users/views/UserFormView.vue'),
@@ -274,6 +280,40 @@ const router = createRouter({
           name: 'orders.detail',
           component: () => import('@/modules/orders/views/OrderDetailView.vue'),
           meta: { permissions: ['order:view'] },
+        },
+
+        // ─── Sorteos ─────────────────────────────────────────────────────────
+        {
+          path: 'raffles',
+          name: 'raffles',
+          component: () => import('@/modules/raffles/views/RaffleListView.vue'),
+          meta: { permissions: ['raffle:view'] },
+        },
+        {
+          path: 'raffles/new',
+          name: 'raffles.create',
+          component: () => import('@/modules/raffles/views/RaffleFormView.vue'),
+          meta: { permissions: ['raffle:manage'] },
+        },
+        {
+          path: 'raffles/:id',
+          name: 'raffles.detail',
+          component: () => import('@/modules/raffles/views/RaffleDetailView.vue'),
+          meta: { permissions: ['raffle:view'] },
+        },
+        {
+          path: 'raffles/:id/edit',
+          name: 'raffles.edit',
+          component: () => import('@/modules/raffles/views/RaffleFormView.vue'),
+          meta: { permissions: ['raffle:manage'] },
+        },
+
+        // ─── Dev Tools ───────────────────────────────────────────────────────
+        {
+          path: 'dev-tools/seeds',
+          name: 'dev-tools.seeds',
+          component: () => import('@/modules/dev-tools/views/SeedsView.vue'),
+          meta: { superAdminOnly: true },
         },
       ],
     },

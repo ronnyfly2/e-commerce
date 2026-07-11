@@ -32,7 +32,11 @@ export type Permission =
   // Dashboard
   | 'dashboard:view'
   // Currencies
-  | 'currency:view' | 'currency:create' | 'currency:update';
+  | 'currency:view' | 'currency:create' | 'currency:update'
+  // Loyalty points
+  | 'points:view' | 'points:manage'
+  // Raffles
+  | 'raffle:view' | 'raffle:manage';
 
 export interface PermissionGroup {
   label: string;
@@ -164,6 +168,20 @@ export const PERMISSION_GROUPS: PermissionGroup[] = [
     label: 'Dashboard',
     permissions: [
       { value: 'dashboard:view', label: 'Ver dashboard' },
+    ],
+  },
+  {
+    label: 'Puntos de fidelidad',
+    permissions: [
+      { value: 'points:view', label: 'Ver' },
+      { value: 'points:manage', label: 'Ajustar' },
+    ],
+  },
+  {
+    label: 'Sorteos',
+    permissions: [
+      { value: 'raffle:view', label: 'Ver' },
+      { value: 'raffle:manage', label: 'Gestionar' },
     ],
   },
 ];

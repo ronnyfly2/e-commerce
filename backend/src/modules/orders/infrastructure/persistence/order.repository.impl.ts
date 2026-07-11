@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, EntityManager, Repository } from 'typeorm';
+import { DataSource, EntityManager, In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomBytes } from 'crypto';
 import { OrderOrmEntity } from './order.orm-entity';
@@ -12,6 +12,9 @@ import { PaymentStatus } from '../../domain/enums/payment-status.enum';
 import { DeliveryType } from '../../domain/enums/delivery-type.enum';
 import { OrderMissingStoreError, InsufficientStockError } from '../../domain/errors/order.errors';
 import { Page, buildPaginationMeta, paginationToSkipTake } from '@/shared/domain/pagination';
+import { ProductOrmEntity } from '@/modules/products/infrastructure/persistence/product.orm-entity';
+import { CustomerRepository } from '@/modules/customers/infrastructure/persistence/customer.repository.impl';
+import { PointsRepository } from '@/modules/points/infrastructure/persistence/points.repository.impl';
 
 export abstract class OrderRepository {
   abstract create(
@@ -30,7 +33,7 @@ export abstract class OrderRepository {
     changedByName: string,
     notes?: string,
   ): Promise<OrderOrmEntity>;
-  abstract updatePaymentStatus(id: string, paymentStatus: PaymentStatus): Promise<void>;
+  abstract updatePaymentStatus(order: OrderOrmEntity, paymentStatus: PaymentStatus): Promise<OrderOrmEntity>;
   abstract softDelete(id: string): Promise<void>;
 }
 
@@ -43,6 +46,10 @@ export class OrderRepositoryImpl implements OrderRepository {
     private readonly itemRepo: Repository<OrderItemOrmEntity>,
     @InjectRepository(OrderStatusHistoryOrmEntity)
     private readonly historyRepo: Repository<OrderStatusHistoryOrmEntity>,
+    @InjectRepository(ProductOrmEntity)
+    private readonly productRepo: Repository<ProductOrmEntity>,
+    private readonly customerRepo: CustomerRepository,
+    private readonly pointsRepo: PointsRepository,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -52,6 +59,9 @@ export class OrderRepositoryImpl implements OrderRepository {
     createdById: string,
     createdByName: string,
   ): Promise<OrderOrmEntity> {
+    const customerId = await this.resolveCustomerId(dto, companyId);
+    const pointsByProductId = await this.resolvePointsByProductId(dto.items, companyId);
+
     return this.dataSource.transaction(async (em) => {
       const subtotalCents = dto.items.reduce(
         (sum, item) => sum + item.quantity * item.unitPriceCents,
@@ -69,6 +79,8 @@ export class OrderRepositoryImpl implements OrderRepository {
         branchId: dto.branchId ?? null,
         storeId: dto.storeId ?? null,
         stockDecremented: false,
+        pointsCredited: false,
+        customerId,
         orderNumber,
         channel: dto.channel,
         status: OrderStatus.PENDING,
@@ -109,6 +121,9 @@ export class OrderRepositoryImpl implements OrderRepository {
           quantity: item.quantity,
           unitPriceCents: item.unitPriceCents,
           totalPriceCents: item.quantity * item.unitPriceCents,
+          pointsAwarded: item.productId
+            ? (pointsByProductId.get(item.productId) ?? 0) * item.quantity
+            : 0,
           notes: item.notes ?? null,
         }),
       );
@@ -141,7 +156,7 @@ export class OrderRepositoryImpl implements OrderRepository {
   }
 
   async findAll(companyId: string, filters: OrderFiltersDto): Promise<Page<OrderOrmEntity>> {
-    const { page = 1, limit = 20, search, status, channel, paymentStatus, branchId, dateFrom, dateTo } = filters;
+    const { page = 1, limit = 20, search, status, channel, paymentStatus, branchId, customerId, dateFrom, dateTo } = filters;
     const { skip, take } = paginationToSkipTake(page, limit);
 
     const qb = this.orderRepo
@@ -162,6 +177,7 @@ export class OrderRepositoryImpl implements OrderRepository {
     if (channel) qb.andWhere('o.channel = :channel', { channel });
     if (paymentStatus) qb.andWhere('o.paymentStatus = :paymentStatus', { paymentStatus });
     if (branchId) qb.andWhere('o.branchId = :branchId', { branchId });
+    if (customerId) qb.andWhere('o.customerId = :customerId', { customerId });
     if (dateFrom) qb.andWhere('o.createdAt >= :dateFrom', { dateFrom: new Date(dateFrom) });
     if (dateTo) {
       const end = new Date(dateTo);
@@ -286,8 +302,47 @@ export class OrderRepositoryImpl implements OrderRepository {
     );
   }
 
-  async updatePaymentStatus(id: string, paymentStatus: PaymentStatus): Promise<void> {
-    await this.orderRepo.update(id, { paymentStatus });
+  async updatePaymentStatus(order: OrderOrmEntity, paymentStatus: PaymentStatus): Promise<OrderOrmEntity> {
+    return this.dataSource.transaction(async (em) => {
+      await em.update(OrderOrmEntity, order.id, { paymentStatus });
+
+      if (paymentStatus === PaymentStatus.PAID && !order.pointsCredited) {
+        await this.pointsRepo.awardForOrder(em, order);
+        await em.update(OrderOrmEntity, order.id, { pointsCredited: true });
+      } else if (
+        order.paymentStatus === PaymentStatus.PAID &&
+        paymentStatus !== PaymentStatus.PAID &&
+        order.pointsCredited
+      ) {
+        await this.pointsRepo.reverseForOrder(em, order);
+        await em.update(OrderOrmEntity, order.id, { pointsCredited: false });
+      }
+
+      return this.findByIdUnscoped(order.id, em);
+    });
+  }
+
+  /** Resolves the CRM customer to link this order to: explicit dto.customerId wins, else a phone match. */
+  private async resolveCustomerId(dto: CreateOrderDto, companyId: string): Promise<string | null> {
+    if (dto.customerId) return dto.customerId;
+    if (!dto.customerPhone) return null;
+    const customer = await this.customerRepo.findByPhone(dto.customerPhone, companyId);
+    return customer?.id ?? null;
+  }
+
+  /** Batch-fetches pointsAwarded-per-unit for every product referenced in the order items. */
+  private async resolvePointsByProductId(
+    items: CreateOrderDto['items'],
+    companyId: string,
+  ): Promise<Map<string, number>> {
+    const productIds = [...new Set(items.filter((i) => i.productId).map((i) => i.productId as string))];
+    if (productIds.length === 0) return new Map();
+
+    const products = await this.productRepo.find({
+      where: { id: In(productIds), companyId },
+      select: { id: true, pointsAwarded: true },
+    });
+    return new Map(products.map((p) => [p.id, p.pointsAwarded]));
   }
 
   async softDelete(id: string): Promise<void> {

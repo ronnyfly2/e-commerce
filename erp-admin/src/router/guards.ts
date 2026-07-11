@@ -12,6 +12,10 @@ export function setupGuards(router: Router): void {
       return { name: 'login', query: { redirect: to.fullPath } };
     }
 
+    if (to.meta.superAdminOnly && !auth.user?.isSuperAdmin) {
+      return { name: 'forbidden' };
+    }
+
     const requiredPermissions = to.meta.permissions as Permission[] | undefined;
     if (requiredPermissions?.length) {
       const hasAll = requiredPermissions.every((p) => auth.hasPermission(p));

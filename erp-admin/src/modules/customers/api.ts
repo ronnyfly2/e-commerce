@@ -1,7 +1,10 @@
 import client from '@/api/client';
 import { API } from '@/api/endpoints';
 import type { ApiResponse, PaginationMeta, PaginationQuery } from '@/shared/types/api.types';
-import type { Customer, CreateCustomerPayload, UpdateCustomerPayload } from './types';
+import type {
+  Customer, CreateCustomerPayload, UpdateCustomerPayload,
+  CustomerPoints, AdjustPointsPayload,
+} from './types';
 
 export const customerApi = {
   getAll: (params?: PaginationQuery) =>
@@ -18,4 +21,10 @@ export const customerApi = {
     client.patch<ApiResponse<Customer>>(API.customer(id), payload).then((r) => r.data.data),
 
   remove: (id: string) => client.delete(API.customer(id)),
+
+  getPoints: (id: string, params?: PaginationQuery) =>
+    client.get<ApiResponse<CustomerPoints>>(API.customerPoints(id), { params }).then((r) => r.data.data),
+
+  adjustPoints: (id: string, payload: AdjustPointsPayload) =>
+    client.post<ApiResponse<{ balance: number }>>(API.customerPointsAdjust(id), payload).then((r) => r.data.data),
 };

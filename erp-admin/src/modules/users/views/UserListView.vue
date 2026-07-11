@@ -85,7 +85,9 @@ async function confirmDelete() {
                     {{ u.firstName[0] }}{{ u.lastName[0] }}
                   </div>
                   <div>
-                    <p class="text-sm font-medium text-gray-900 dark:text-white">{{ u.firstName }} {{ u.lastName }}</p>
+                    <RouterLink :to="`/users/${u.id}`" class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-400">
+                      {{ u.firstName }} {{ u.lastName }}
+                    </RouterLink>
                   </div>
                 </div>
               </td>

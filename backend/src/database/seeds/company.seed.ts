@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import { CompanyOrmEntity } from '@/modules/companies/infrastructure/persistence/company.orm-entity';
 
-const DEFAULT_COMPANY = {
+export const DEFAULT_COMPANY = {
   name: process.env.SEED_COMPANY_NAME ?? 'Mi Empresa',
   slug: process.env.SEED_COMPANY_SLUG ?? 'mi-empresa',
   ruc:  process.env.SEED_COMPANY_RUC  ?? '20000000001',

@@ -55,6 +55,11 @@ export class CreateOrderDto {
   @IsEnum(DeliveryType)
   deliveryType: DeliveryType;
 
+  @ApiPropertyOptional({ description: 'CRM customer UUID to link this order to (for loyalty points/purchase history)' })
+  @IsOptional()
+  @IsUUID()
+  customerId?: string;
+
   @ApiProperty({ example: 'Juan Pérez' })
   @IsString()
   @IsNotEmpty()

@@ -17,6 +17,8 @@ import {
   WrenchScrewdriverIcon,
   MapPinIcon,
   StarIcon,
+  TicketIcon,
+  CircleStackIcon,
 } from '@heroicons/vue/24/outline';
 import { useAuthStore } from '@/shared/stores/auth.store';
 import { useUiStore } from '@/shared/stores/ui.store';
@@ -40,12 +42,18 @@ const navItems = [
   { label: 'Pedidos', to: '/orders', icon: ClipboardDocumentListIcon, permission: 'order:view' as const },
   { label: 'Clientes', to: '/customers', icon: UserGroupIcon, permission: 'customer:view' as const },
   { label: 'Pipeline', to: '/deals', icon: FunnelIcon, permission: 'deal:view' as const },
+  { label: 'Sorteos', to: '/raffles', icon: TicketIcon, permission: 'raffle:view' as const },
   { label: 'WhatsApp', to: '/whatsapp/rules', icon: ChatBubbleLeftRightIcon, permission: 'customer:update' as const },
+  { label: 'Seeds', to: '/dev-tools/seeds', icon: CircleStackIcon, superAdminOnly: true },
 ];
 
-const visible = navItems.filter((item) =>
-  !item.permission || auth.hasPermission(item.permission),
-);
+function isVisible(item: (typeof navItems)[number]): boolean {
+  if (item.superAdminOnly) return !!auth.user?.isSuperAdmin;
+  if (item.permission) return auth.hasPermission(item.permission);
+  return true;
+}
+
+const visible = navItems.filter(isVisible);
 
 function isActive(path: string): boolean {
   return route.path.startsWith(path);

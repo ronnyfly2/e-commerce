@@ -27,4 +27,8 @@ export class CustomerOrmEntity extends BaseOrmEntity {
 
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
+
+  /** Denormalized cache of SUM(points_transactions.points) — only written by the `points` module, inside a transaction. */
+  @Column({ name: 'points_balance', default: 0 })
+  pointsBalance: number;
 }

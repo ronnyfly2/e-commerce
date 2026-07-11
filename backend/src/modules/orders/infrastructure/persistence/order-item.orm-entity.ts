@@ -35,6 +35,10 @@ export class OrderItemOrmEntity {
   @Column({ name: 'total_price_cents', type: 'int' })
   totalPriceCents: number;
 
+  /** Snapshot of product.pointsAwarded * quantity at order creation time — bundle lines award 0 points for now. */
+  @Column({ name: 'points_awarded', type: 'int', default: 0 })
+  pointsAwarded: number;
+
   @Column({ type: 'text', nullable: true })
   notes: string | null;
 

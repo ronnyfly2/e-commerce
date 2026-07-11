@@ -90,8 +90,7 @@ export class OrderController {
     if (!user.companyId) throw new ForbiddenException('No company context');
     const order = await this.orderRepo.findById(id, user.companyId);
     if (!order) throw new OrderNotFoundError(id);
-    await this.orderRepo.updatePaymentStatus(id, dto.paymentStatus);
-    return this.orderRepo.findById(id, user.companyId);
+    return this.orderRepo.updatePaymentStatus(order, dto.paymentStatus);
   }
 
   @Delete(':id')

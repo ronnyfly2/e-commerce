@@ -90,4 +90,12 @@ export enum Permission {
   CURRENCY_VIEW = 'currency:view',
   CURRENCY_CREATE = 'currency:create',
   CURRENCY_UPDATE = 'currency:update',
+
+  // ─── Loyalty points ───────────────────────────────────────────────────────
+  POINTS_VIEW = 'points:view',
+  POINTS_MANAGE = 'points:manage',
+
+  // ─── Raffles (sorteos) ────────────────────────────────────────────────────
+  RAFFLE_VIEW = 'raffle:view',
+  RAFFLE_MANAGE = 'raffle:manage',
 }

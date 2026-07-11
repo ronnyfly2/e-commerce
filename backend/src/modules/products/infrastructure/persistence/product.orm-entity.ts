@@ -64,6 +64,10 @@ export class ProductOrmEntity extends BaseOrmEntity {
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
+  /** Loyalty points credited per unit purchased once the order's payment is marked PAID — see the `points` module. */
+  @Column({ name: 'points_awarded', default: 0 })
+  pointsAwarded: number;
+
   @ManyToOne(() => CategoryOrmEntity, { nullable: true })
   @JoinColumn({ name: 'category_id' })
   category: CategoryOrmEntity | null;

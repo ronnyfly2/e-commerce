@@ -96,4 +96,10 @@ export class CreateProductDto {
   @IsString({ each: true })
   @MaxLength(500, { each: true })
   images?: string[];
+
+  @ApiPropertyOptional({ default: 0, description: 'Loyalty points credited per unit purchased once payment is marked PAID' })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  pointsAwarded?: number;
 }

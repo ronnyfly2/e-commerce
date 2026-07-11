@@ -34,6 +34,8 @@ export interface Product {
   imageUrl: string | null;
   images: string[] | null;
   isActive: boolean;
+  /** Loyalty points credited per unit purchased once the order's payment is marked PAID. */
+  pointsAwarded: number;
   category?: { id: string; name: string } | null;
   brand?: { id: string; name: string } | null;
   createdAt: string;
@@ -55,6 +57,7 @@ export interface CreateProductPayload {
   categoryId?: string;
   brandId?: string;
   imageUrl?: string;
+  pointsAwarded?: number;
 }
 
 export type UpdateProductPayload = Partial<CreateProductPayload & { isActive: boolean }>;

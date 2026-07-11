@@ -32,6 +32,9 @@ import { UploadsModule } from '@/modules/uploads/uploads.module';
 import { CustomersModule } from '@/modules/customers/customers.module';
 import { DealsModule } from '@/modules/deals/deals.module';
 import { WhatsAppModule } from '@/modules/whatsapp/whatsapp.module';
+import { PointsModule } from '@/modules/points/points.module';
+import { RafflesModule } from '@/modules/raffles/raffles.module';
+import { DevToolsModule } from '@/modules/dev-tools/dev-tools.module';
 
 @Module({
   imports: [
@@ -90,6 +93,9 @@ import { WhatsAppModule } from '@/modules/whatsapp/whatsapp.module';
     CustomersModule,
     DealsModule,
     WhatsAppModule,
+    PointsModule,
+    RafflesModule,
+    DevToolsModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },

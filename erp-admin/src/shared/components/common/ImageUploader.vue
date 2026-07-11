@@ -8,9 +8,11 @@ import { uploadsApi } from '@/api/uploads';
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
 
-const { modelValue, max = Infinity } = defineProps<{
+const { modelValue, max = Infinity, preventDuplicates = false } = defineProps<{
   modelValue: string[];
   max?: number;
+  /** Skip files already uploaded through this component instance (matched by name + size). */
+  preventDuplicates?: boolean;
 }>();
 
 const emit = defineEmits<{ 'update:modelValue': [v: string[]] }>();
@@ -18,6 +20,7 @@ const emit = defineEmits<{ 'update:modelValue': [v: string[]] }>();
 const fileInput = useTemplateRef<HTMLInputElement>('fileInput');
 const isDragging = ref(false);
 const isUploading = ref(false);
+const uploadedSignatures = new Set<string>();
 
 const canAddMore = computed(() => modelValue.length < max);
 
@@ -25,10 +28,34 @@ function openPicker() {
   fileInput.value?.click();
 }
 
+function fileSignature(f: File): string {
+  return `${f.name}:${f.size}`;
+}
+
 async function handleFiles(fileList: FileList | null) {
   if (!fileList || fileList.length === 0) return;
   const remaining = max - modelValue.length;
-  const files = Array.from(fileList).slice(0, remaining);
+  let files = Array.from(fileList).slice(0, remaining);
+
+  if (preventDuplicates) {
+    const seenInBatch = new Set<string>();
+    const deduped: File[] = [];
+    let skipped = 0;
+    for (const f of files) {
+      const signature = fileSignature(f);
+      if (uploadedSignatures.has(signature) || seenInBatch.has(signature)) {
+        skipped += 1;
+        continue;
+      }
+      seenInBatch.add(signature);
+      deduped.push(f);
+    }
+    if (skipped > 0) {
+      toast.error(skipped === 1 ? 'Se omitió una imagen repetida' : `Se omitieron ${skipped} imágenes repetidas`);
+    }
+    files = deduped;
+  }
+  if (files.length === 0) return;
 
   const invalid = files.find((f) => !ACCEPTED_TYPES.includes(f.type) || f.size > MAX_FILE_SIZE_BYTES);
   if (invalid) {
@@ -39,6 +66,7 @@ async function handleFiles(fileList: FileList | null) {
   isUploading.value = true;
   try {
     const urls = await Promise.all(files.map((f) => uploadsApi.uploadImage(f)));
+    if (preventDuplicates) files.forEach((f) => uploadedSignatures.add(fileSignature(f)));
     emit('update:modelValue', [...modelValue, ...urls]);
   } catch (e) {
     toast.error(extractApiError(e));

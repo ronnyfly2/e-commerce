@@ -8,7 +8,7 @@ interface RoleDef {
   permissions: Permission[];
 }
 
-const ROLES: RoleDef[] = [
+export const ROLES: RoleDef[] = [
   {
     name: 'Super Administrador ERP',
     description:
@@ -44,6 +44,10 @@ const ROLES: RoleDef[] = [
       Permission.REPORT_VIEW, Permission.REPORT_EXPORT,
       // Dashboard
       Permission.DASHBOARD_VIEW,
+      // Loyalty points
+      Permission.POINTS_VIEW, Permission.POINTS_MANAGE,
+      // Raffles
+      Permission.RAFFLE_VIEW, Permission.RAFFLE_MANAGE,
     ],
   },
 
@@ -82,6 +86,10 @@ const ROLES: RoleDef[] = [
       Permission.REPORT_VIEW, Permission.REPORT_EXPORT,
       // Dashboard
       Permission.DASHBOARD_VIEW,
+      // Loyalty points
+      Permission.POINTS_VIEW, Permission.POINTS_MANAGE,
+      // Raffles
+      Permission.RAFFLE_VIEW, Permission.RAFFLE_MANAGE,
     ],
   },
 
@@ -106,6 +114,10 @@ const ROLES: RoleDef[] = [
       Permission.REPORT_VIEW, Permission.REPORT_EXPORT,
       // Dashboard
       Permission.DASHBOARD_VIEW,
+      // Loyalty points (view only)
+      Permission.POINTS_VIEW,
+      // Raffles (view only)
+      Permission.RAFFLE_VIEW,
     ],
   },
 
@@ -150,15 +162,6 @@ const ROLES: RoleDef[] = [
       Permission.CUSTOMER_VIEW,
       // Dashboard
       Permission.DASHBOARD_VIEW,
-    ],
-  },
-
-  {
-    name: 'Cliente',
-    description:
-      'Cuenta de cliente para el portal web. Solo puede consultar sus propios pedidos. Sin acceso al panel de administración.',
-    permissions: [
-      Permission.ORDER_VIEW,
     ],
   },
 ];
